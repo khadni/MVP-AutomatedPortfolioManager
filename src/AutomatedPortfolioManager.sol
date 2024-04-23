@@ -6,8 +6,10 @@ import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import {AutomationCompatibleInterface} from "@chainlink/contracts/src/v0.8/automation/AutomationCompatible.sol";
+import {LinkTokenInterface} from "@chainlink/contracts/src/v0.8/shared/interfaces/LinkTokenInterface.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import {AutomationCompatibleInterface} from "@chainlink/contracts/src/v0.8/automation/AutomationCompatible.sol";
+import {AutomationRegistrarInterface, RegistrationParams} from "./interfaces/AutomationRegistrarInterface.sol";
 import {AssetValueCalculator} from "./AssetValueCalculator.sol";
 import {IOffchainDataFetcher} from "./interfaces/IOffchainDataFetcher.sol";
 import {IMimicToken} from "./interfaces/IMimicToken.sol";
@@ -25,6 +27,8 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
     error PortfolioManager__EmptyAssetsArray(); // The asset array is empty
     error PortfolioManager__InsufficientAllowance(); // The contract lacks sufficient allowance to transfer USDC
     error PortfolioManager__NoUsdcBalanceToWithdraw(); // No USDC balance available for withdrawal
+    error PortfolioManager__InsufficientLinkBalance(uint256 available, uint256 required);
+    error PortfolioManager__LinkApprovalFailed(); // Failed to approve LINK spending for registration
     error PortfolioManager__NoInvestmentFound(); // No investments have been made in the portfolio
     error PortfolioManager__InvalidPercentage(); // Redemption percentage is invalid (must be between 0 and 100%, represented by 1e6)
     error PortfolioManager__ExcessRedemption(); // Redemption amount exceeds available funds or ownership
@@ -32,15 +36,13 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
     error PortfolioManager__ApprovalFailed(string assetName); // Failed to approve token transfer for an asset
     error PortfolioManager__AssetPurchaseFailed(string assetName, string reason); // Asset purchase failed
     error PortfolioManager__AssetSaleFailed(string assetName); // Asset sale failed
-    error PortfolioManager__ApprovalFailedForAsset(string assetName); // Failed to approve USDC spending for an asset
 
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
 
-    event PortfolioRebalanced(uint256[] newAllocations); // Portfolio rebalanced with new asset allocations
-    event AssetSaleAttempted(address indexed asset, uint256 amount, uint256 allowance); // Attempt to sell an asset
-    event AssetSaleResult(address indexed asset, uint256 usdcAmount, bool success); // Result of an asset sale attempt
+    event CustomUpkeepRegistered(uint256 upkeepID, address contractAddress, address admin);
+    event PortfolioRebalanced(uint256[] newAllocations);
 
     /*//////////////////////////////////////////////////////////////
                                 STATE
@@ -48,6 +50,8 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
 
     /* ---------- Contracts ---------- */
     IERC20 public i_usdc;
+    LinkTokenInterface public i_link;
+    AutomationRegistrarInterface public i_registrar;
     IOffchainDataFetcher public i_offChainDataFetcher; // Fetch BTC and ETH sentiment scores, and GVZ value
 
     /* ---------- Price Feeds ---------- */
@@ -55,7 +59,7 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
     AggregatorV3Interface public s_priceFeedBTC = AggregatorV3Interface(0x1b44F3514812d835EB1BDB0acB33d3fA3351Ee43);
     AggregatorV3Interface public s_priceFeedETH = AggregatorV3Interface(0x694AA1769357215DE4FAC081bf1f309aDC325306);
 
-    /* ---------- Portfolio Assets ---------- */
+    /* ---------- Portfolio ----------- */
     struct Asset {
         string assetName;
         address tokenAddress;
@@ -63,25 +67,23 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
         uint256 currentAllocation; // In percentage, scaled by 1e6 (e.g., 50% = 500000)
     }
 
-    Asset[] public s_assets;
-
-    /* ---------- Investor Data ---------- */
     struct Investor {
         uint256 investedAmount; // in USDC, with 6 decimals
         uint256 redemeedAmount; // in USDC, with 6 decimals
             // Add any other investor-related data...
     }
 
+    Asset[] public s_assets;
     mapping(address => Investor) public s_investors;
 
     /* ---------- Constants ---------- */
-    uint256 public constant WEIGHT_SCALE_6 = 1e6;
-    uint256 public constant WEIGHT_SCALE_18 = 1e18;
-    uint256 public constant HUNDRED_PERCENT = WEIGHT_SCALE_6; // 100% scaled by 1e6
-    uint256 public constant TWO_PERCENT = 20000; // 2% scaled by 1e6
-    uint256 public constant INIT_TOKEN_PER_USD = 1e12; // 1e18 (Portfolio Token decimals) / 1e6 (USDC decimals)
-    int256 public constant SCORE_DIFF_IMPACT_FACTOR = 10000; // Factor to adjust asset allocations based on sentiment score changes (e.g., 10000 = 1%)
-    uint256 public constant GVZ_HIGH_VOL_THRESHOLD = 2000; // GVZ value threshold for high volatility
+    uint256 private constant WEIGHT_SCALE_6 = 1e6;
+    uint256 private constant WEIGHT_SCALE_18 = 1e18;
+    uint256 private constant HUNDRED_PERCENT = WEIGHT_SCALE_6; // 100% scaled by 1e6
+    uint256 private constant TWO_PERCENT = 20000; // 2% scaled by 1e6
+    uint256 private constant INIT_TOKEN_PER_USD = 1e12; // 1e18 (Portfolio Token decimals) / 1e6 (USDC decimals)
+    int256 private constant SCORE_DIFF_IMPACT_FACTOR = 10000; // Factor to adjust asset allocations based on sentiment score changes (e.g., 10000 = 1%)
+    uint256 private constant GVZ_HIGH_VOL_THRESHOLD = 2000; // GVZ value threshold for high volatility
 
     /* ---------- Portfolio Value and Rebalancing ---------- */
     uint256 public s_totalInvestedInUsd; // in USDC, with 6 decimals
@@ -93,8 +95,9 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
     uint256 public s_lastEthScore; // Latest fetched sentiment score for ETH
     uint256 public s_lastGvz; // Latest fetched GVZ value
 
-    // delete me after testings
-    int256[] public s_tokensDifference;
+    /* ---------- Chainlink Automation ---------- */
+    uint256 private s_upkeepID; // ID assigned to the registered upkeep by the Chainlink Automation Registrar
+    uint96 private constant INIT_UPKEEP_FUNDING_AMOUNT = 2e18; // 2 LINK for initial upkeep funding
 
     /*//////////////////////////////////////////////////////////////
                               CONSTRUCTOR
@@ -111,6 +114,8 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
     constructor(address _offChainDataFetcher) ERC20("PortfolioManagerToken", "PMT") Ownable() {
         i_usdc = IERC20(0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238); // hardcoded for Sepolia
         i_offChainDataFetcher = IOffchainDataFetcher(_offChainDataFetcher);
+        i_link = LinkTokenInterface(0x779877A7B0D9E8603169DdbD7836e478b4624789); // hardcoded for Sepolia
+        i_registrar = AutomationRegistrarInterface(0xb0E49c5D0d05cbc241d68c05BC5BA1d1B7B72976); // hardcoded for Sepolia
 
         s_assets.push(Asset("MimicXAU", 0xb809576570dD4d9c33f5a6F370Fb542968be5804, s_priceFeedXAU, 400000)); // 40% gold allocation
         s_assets.push(Asset("MimicBTC", 0x263699bc60C44477e5AcDfB1726BA5E89De9134B, s_priceFeedBTC, 300000)); // 30% BTC allocation
@@ -367,6 +372,52 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
     //////////////////////////////////////////////////////////////*/
 
     /**
+     * @notice Registers this contract for Chainlink Automation and funds it with LINK for upkeep costs.
+     * @dev Self-registers the contract with the Chainlink Automation network, setting up conditions for automated upkeep.
+     * It requires enough LINK tokens in the contract for the registration fee. This function sets up the initial parameters
+     * for the upkeep, approves the necessary LINK tokens for the Automation Registrar, and then calls the registrar to register
+     * the upkeep. It reverts if there's insufficient LINK balance or if LINK token approval fails.
+     * Emits a `CustomUpkeepRegistered` event upon successful registration.
+     * @return upkeepID The ID assigned to the registered upkeep by the Chainlink Automation Registrar.
+     */
+    function selfRegisterAndFundForConditionalUpkeep() external onlyOwner returns (uint256) {
+        RegistrationParams memory params = RegistrationParams({
+            name: "Automated Portfolio Upkeep",
+            encryptedEmail: "0x", // Leave as 0x if not using email notifications
+            upkeepContract: address(this), // This contract's address
+            gasLimit: 500000, // Adjust based on your `performUpkeep` gas usage
+            adminAddress: owner(), // Owner's address for upkeep management
+            triggerType: 0, // Use 0 for conditional-based triggers
+            checkData: "0x", // Optional: data for `checkUpkeep`
+            triggerConfig: "0x", // Not used for time-based triggers
+            offchainConfig: "0x", // Placeholder for future use
+            amount: INIT_UPKEEP_FUNDING_AMOUNT // The initial funding amount in LINK (In WEI) - Ensure this is less than or equal to the allowance granted to the Automation Registrar
+        });
+
+        // Ensure the contract has enough LINK to cover the registration fee
+        uint256 linkBalance = i_link.balanceOf(address(this));
+        if (linkBalance < params.amount) {
+            revert PortfolioManager__InsufficientLinkBalance(linkBalance, params.amount);
+        }
+
+        // Approve the Chainlink Automation Registrar to use the contract's LINK tokens
+        bool approvalSuccess = i_link.approve(address(i_registrar), params.amount);
+        if (!approvalSuccess) {
+            revert PortfolioManager__LinkApprovalFailed();
+        }
+
+        // Call the `registerUpkeep` function on the Chainlink Automation Registrar
+        uint256 upkeepID = i_registrar.registerUpkeep(params);
+
+        // Store the returned upkeepID if needed for future reference
+        s_upkeepID = upkeepID;
+
+        emit CustomUpkeepRegistered(upkeepID, address(this), owner());
+
+        return upkeepID;
+    }
+
+    /**
      * @notice Checks if the portfolio needs rebalancing based on current and suggested asset allocations.
      * @dev This function is called by Chainlink Automation to determine if an action is required.
      * @param /*checkData A byte array sent when the upkeep was registered, unused in this function.
@@ -577,7 +628,7 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
         if (currentAllowance < usdcAllowanceRequired) {
             bool success = i_usdc.approve(tokenAddress, usdcAllowanceRequired);
             if (!success) {
-                revert PortfolioManager__ApprovalFailedForAsset(s_assets[assetIndex].assetName);
+                revert PortfolioManager__ApprovalFailed(s_assets[assetIndex].assetName);
             }
         }
 
