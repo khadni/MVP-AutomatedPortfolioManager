@@ -14,7 +14,7 @@ import {AssetValueCalculator} from "./AssetValueCalculator.sol";
 import {IOffchainDataFetcher} from "./interfaces/IOffchainDataFetcher.sol";
 import {IMimicToken} from "./interfaces/IMimicToken.sol";
 
-contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterface {
+contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterface, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     /*//////////////////////////////////////////////////////////////
@@ -31,11 +31,12 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
     error PortfolioManager__LinkApprovalFailed(); // Failed to approve LINK spending for registration
     error PortfolioManager__NoInvestmentFound(); // No investments have been made in the portfolio
     error PortfolioManager__InvalidPercentage(); // Redemption percentage is invalid (must be between 0 and 100%, represented by 1e6)
-    error PortfolioManager__ExcessRedemption(); // Redemption amount exceeds available funds or ownership
     error PortfolioManager__InsufficientTokensForRedemption(); // Not enough portfolio tokens for redemption
     error PortfolioManager__ApprovalFailed(string assetName); // Failed to approve token transfer for an asset
     error PortfolioManager__AssetPurchaseFailed(string assetName, string reason); // Asset purchase failed
     error PortfolioManager__AssetSaleFailed(string assetName); // Asset sale failed
+    error PortfolioManager__InvalidSentimentScore(); // Invalid sentiment score received
+    error PortfolioManager__InvalidGVZValue(); // Invalid GVZ value received
 
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
@@ -157,7 +158,11 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
     function calculateAllocations() public view returns (uint256[] memory, uint256[] memory) {
         // Get the latest sentiment scores for BTC and ETH, and the latest GVZ value
         // uint256[] memory latestData = i_offChainDataFetcher.getLastResponse();
+
+        // Delete after testings
         uint256[] memory latestData = s_manualData;
+
+        _validateExternalData(latestData);
 
         uint256 newBtcScore = latestData[0];
         uint256 newEthScore = latestData[1];
@@ -306,7 +311,7 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
      * @dev Reverts with `PortfolioManager__InsufficientAllowance` if the contract does not have sufficient allowance to transfer USDC on behalf of the investor.
      * @dev Reverts with errors from `_calculateTokensToMint` or `_purchaseAssets` if those functions encounter issues.
      */
-    function invest(uint256 usdcAmount) external {
+    function invest(uint256 usdcAmount) external nonReentrant {
         // Ensure the contract has enough allowance to transfer USDC on behalf of the investor
         if (i_usdc.allowance(msg.sender, address(this)) < usdcAmount) {
             revert PortfolioManager__InsufficientAllowance();
@@ -342,7 +347,7 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
      * - Updates the investor's redeemed amount and the total USDC redeemed by the contract.
      * @dev Reverts if the percentage is zero or exceeds 100, or if the USDC transfer fails.
      */
-    function redeem(uint256 percentage) external {
+    function redeem(uint256 percentage) external nonReentrant {
         if (percentage == 0 || percentage > HUNDRED_PERCENT) {
             revert PortfolioManager__InvalidPercentage();
         }
@@ -351,8 +356,12 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
         uint256 effectiveRedemptionPercentage = (ownershipShare * percentage) / HUNDRED_PERCENT;
 
         // Burn the proportional tokens from the investor's balance
-        uint256 totalPortfolioTokensToBurn = (balanceOf(msg.sender) * percentage) / HUNDRED_PERCENT;
-        _burn(msg.sender, totalPortfolioTokensToBurn);
+        uint256 userTokenBalance = balanceOf(msg.sender);
+        uint256 tokensToBurn = (userTokenBalance * percentage) / HUNDRED_PERCENT;
+        if (tokensToBurn > userTokenBalance) {
+            revert PortfolioManager__InsufficientTokensForRedemption();
+        }
+        _burn(msg.sender, tokensToBurn);
 
         // Sell assets and calculate the USDC amount to be redeemed
         uint256 usdcRedeemedAmount = _sellAssetsAndCalculateRedemptionAmount(effectiveRedemptionPercentage);
@@ -733,6 +742,18 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
         }
         if (totalAllocation != 1 * WEIGHT_SCALE_6) {
             revert PortfolioManager__TotalAllocationMustBe100();
+        }
+    }
+
+    function _validateExternalData(uint256[] memory data) internal pure {
+        (uint256 btcScore, uint256 ethScore, uint256 gvz) = (data[0], data[1], data[2]);
+
+        if (btcScore < 0 || btcScore > 9999 || ethScore < 0 || ethScore > 9999) {
+            revert PortfolioManager__InvalidSentimentScore();
+        }
+
+        if (gvz < 0 || gvz > 9999) {
+            revert PortfolioManager__InvalidGVZValue();
         }
     }
 }
