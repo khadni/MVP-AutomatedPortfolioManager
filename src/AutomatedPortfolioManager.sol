@@ -124,7 +124,9 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
 
         s_lastRebalanceTimestamp = block.timestamp; // Set the initial rebalance timestamp
 
+        // delete after testings
         s_manualData = [3500, 3500, 1500];
+        // delete after testings
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -273,8 +275,7 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
         uint256 newAllocLength = newAllocations.length;
         uint256[] memory tokensPriceInUsd = new uint256[](newAllocLength);
         for (uint256 i = 0; i < newAllocLength; i++) {
-            tokensPriceInUsd[i] =
-                AssetValueCalculator.getAssetPriceInUsd6Dec(s_assets[i].tokenAddress, s_assets[i].priceFeed);
+            tokensPriceInUsd[i] = AssetValueCalculator.getAssetPriceInUsd6Dec(s_assets[i].priceFeed);
         }
 
         // 5. Calculate the number of tokens required for each asset to reach the target value
@@ -627,8 +628,7 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
     /// @dev Buys a specified amount of an asset token after ensuring sufficient USDC allowance, adjusting the allowance if necessary.
     function _buySingleAsset(uint256 assetIndex, uint256 tokenAmount) internal {
         address tokenAddress = s_assets[assetIndex].tokenAddress;
-        uint256 tokenPrice6Dec =
-            AssetValueCalculator.getAssetPriceInUsd6Dec(tokenAddress, s_assets[assetIndex].priceFeed);
+        uint256 tokenPrice6Dec = AssetValueCalculator.getAssetPriceInUsd6Dec(s_assets[assetIndex].priceFeed);
 
         // check current USDC allowance and increase if needed
         uint256 currentAllowance = i_usdc.allowance(address(this), tokenAddress);
