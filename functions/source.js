@@ -21,6 +21,8 @@ function parseData(response) {
 }
 
 // Calculate final sentiment score based on weights
+// From CryptoCompare: score_threshold_bearish: 0.25
+// From CryptoCompare: score_threshold_bullish: 0.75
 function calculateFinalSentimentScore(data) {
   return (
     (data.concentrationVarScore * 0.3 +
