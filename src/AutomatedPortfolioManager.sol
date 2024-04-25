@@ -159,10 +159,10 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
      */
     function calculateAllocations() public view returns (uint256[] memory, uint256[] memory) {
         // Get the latest sentiment scores for BTC and ETH, and the latest GVZ value
-        // uint256[] memory latestData = i_offChainDataFetcher.getLastResponse();
+        uint256[] memory latestData = i_offChainDataFetcher.getLastResponse();
 
         // Delete after testings
-        uint256[] memory latestData = s_manualData;
+        // uint256[] memory latestData = s_manualData;
 
         _validateExternalData(latestData);
 
