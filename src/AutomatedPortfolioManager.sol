@@ -54,7 +54,7 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
     IERC20 internal i_usdc;
     LinkTokenInterface internal i_link;
     AutomationRegistrarInterface internal i_registrar;
-    IOffchainDataFetcher internal i_offChainDataFetcher; // Fetch BTC and ETH sentiment scores, and GVZ value
+    IOffchainDataFetcher public i_offChainDataFetcher; // Fetch BTC and ETH sentiment scores, and GVZ value
 
     /* ---------- Price Feeds ---------- */
     AggregatorV3Interface public s_priceFeedXAU = AggregatorV3Interface(0xC5981F461d74c46eB4b0CF3f4Ec79f025573B0Ea);
