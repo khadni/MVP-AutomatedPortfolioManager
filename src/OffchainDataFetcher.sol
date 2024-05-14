@@ -11,17 +11,17 @@ import {ConfirmedOwner} from "@chainlink/contracts/src/v0.8/shared/access/Confir
  * @notice NOT FOR PRODUCTION USE
  */
 contract OffchainDataFetcher is FunctionsClient, ConfirmedOwner {
+    bytes internal request;
     address public upkeepContract;
-    bytes public request;
-    uint64 public subscriptionId;
-    uint32 public gasLimit;
-    bytes32 public donID;
+    uint64 internal subscriptionId;
+    uint32 internal gasLimit;
+    bytes32 internal donID;
     bytes32 public s_lastRequestId;
     uint256[] public s_lastResponse;
     bytes public s_lastError;
 
-    error NotAllowedCaller(address caller, address owner, address automationRegistry);
-    error UnexpectedRequestID(bytes32 requestId);
+    error OffchainDataFetcher__NotAllowedCaller(address caller, address owner, address upkeepContract);
+    error OffchainDataFetcher__UnexpectedRequestID(bytes32 requestId);
 
     event Response(bytes32 indexed requestId, bytes response, bytes err);
     event DecodedResponse(bytes32 indexed requestId, uint256[] suggestedAlloc);
@@ -33,7 +33,7 @@ contract OffchainDataFetcher is FunctionsClient, ConfirmedOwner {
      */
     modifier onlyAllowed() {
         if (msg.sender != owner() && msg.sender != upkeepContract) {
-            revert NotAllowedCaller(msg.sender, owner(), upkeepContract);
+            revert OffchainDataFetcher__NotAllowedCaller(msg.sender, owner(), upkeepContract);
         }
         _;
     }
@@ -80,7 +80,7 @@ contract OffchainDataFetcher is FunctionsClient, ConfirmedOwner {
      */
     function fulfillRequest(bytes32 requestId, bytes memory response, bytes memory err) internal override {
         if (s_lastRequestId != requestId) {
-            revert UnexpectedRequestID(requestId);
+            revert OffchainDataFetcher__UnexpectedRequestID(requestId);
         }
         s_lastError = err;
 

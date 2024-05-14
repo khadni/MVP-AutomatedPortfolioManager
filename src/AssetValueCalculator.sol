@@ -32,16 +32,15 @@ library AssetValueCalculator {
      * If any price data is stale, negative, or the round ID is zero, the function will revert.
      * @param tokenAddress The address of the ERC20 token contract complying with IExtendedERC20.
      * @param assetPriceFeed The address of the Chainlink price feed for the token.
-     * @param usdcPriceFeed The address of the Chainlink price feed for USDC/USD.
      * @param contractAddress The address holding the tokens.
      * @return The total USDC value of the tokens held by the contract, expressed with 6 decimals.
      */
     function getHeldAssetValueInUsdc6Dec(
         address tokenAddress,
         AggregatorV3Interface assetPriceFeed,
-        AggregatorV3Interface usdcPriceFeed,
         address contractAddress
     ) external view returns (uint256) {
+        AggregatorV3Interface usdcPriceFeed = AggregatorV3Interface(USDC_USD_FEED);
         IExtendedERC20 token = IExtendedERC20(tokenAddress);
         uint256 tokenBalance = token.balanceOf(contractAddress);
         (uint80 assetRoundId, int256 assetPrice,, uint256 assetUpdatedAt,) = assetPriceFeed.latestRoundData();

@@ -37,6 +37,7 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
     error PortfolioManager__AssetSaleFailed(string assetName); // Asset sale failed
     error PortfolioManager__InvalidSentimentScore(); // Invalid sentiment score received
     error PortfolioManager__InvalidGVZValue(); // Invalid GVZ value received
+    error PortfolioManager__NotAllowedCaller(address caller, address owner, address upkeepContract);
 
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
@@ -50,10 +51,10 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
     //////////////////////////////////////////////////////////////*/
 
     /* ---------- Contracts ---------- */
-    IERC20 public i_usdc;
-    LinkTokenInterface public i_link;
-    AutomationRegistrarInterface public i_registrar;
-    IOffchainDataFetcher public i_offChainDataFetcher; // Fetch BTC and ETH sentiment scores, and GVZ value
+    IERC20 internal i_usdc;
+    LinkTokenInterface internal i_link;
+    AutomationRegistrarInterface internal i_registrar;
+    IOffchainDataFetcher internal i_offChainDataFetcher; // Fetch BTC and ETH sentiment scores, and GVZ value
 
     /* ---------- Price Feeds ---------- */
     AggregatorV3Interface public s_priceFeedXAU = AggregatorV3Interface(0xC5981F461d74c46eB4b0CF3f4Ec79f025573B0Ea);
@@ -87,8 +88,8 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
     uint256 private constant GVZ_HIGH_VOL_THRESHOLD = 2000; // GVZ value threshold for high volatility
 
     /* ---------- Portfolio Value and Rebalancing ---------- */
-    uint256 public s_totalInvestedInUsd; // in USDC, with 6 decimals
-    uint256 public s_totalRedeemedInUsd; // in USDC, with 6 decimals
+    uint256 public s_totalInvestedInUsdc; // in USDC, with 6 decimals
+    uint256 public s_totalRedeemedInUsdc; // in USDC, with 6 decimals
     uint256 public s_lastRebalanceTimestamp; // Last time the portfolio was rebalanced (Unix timestamp)
 
     /* ---------- Sentiment and Volatility Data ---------- */
@@ -99,6 +100,7 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
     /* ---------- Chainlink Automation ---------- */
     uint256 private s_upkeepID; // ID assigned to the registered upkeep by the Chainlink Automation Registrar
     uint96 private constant INIT_UPKEEP_FUNDING_AMOUNT = 2e18; // 2 LINK for initial upkeep funding
+    address public s_forwarderUpkeepContract; // Address of the upkeep contract for Chainlink Automation
 
     /*//////////////////////////////////////////////////////////////
                               CONSTRUCTOR
@@ -123,27 +125,21 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
         s_assets.push(Asset("MimicETH", 0x0F542B5D65aa3c29e6046DD219B27AE00b8371b0, s_priceFeedETH, 300000)); // 30% ETH allocation
 
         s_lastRebalanceTimestamp = block.timestamp; // Set the initial rebalance timestamp
+    }
 
-        // delete after testings
-        s_manualData = [3500, 3500, 1500];
-        // delete after testings
+    /**
+     * @notice Reverts if called by anyone other than the contract owner or automation registry.
+     */
+    modifier onlyAllowed() {
+        if (msg.sender != owner() && msg.sender != s_forwarderUpkeepContract) {
+            revert PortfolioManager__NotAllowedCaller(msg.sender, owner(), s_forwarderUpkeepContract);
+        }
+        _;
     }
 
     /*//////////////////////////////////////////////////////////////
                            REBALANCING LOGIC FUNCTIONS
     //////////////////////////////////////////////////////////////*/
-
-    // delete after testings
-    // delete after testings
-    // delete after testings
-    uint256[] public s_manualData;
-
-    function manuallyInputNewData(uint256 _lastBtcScore, uint256 _lastEthScore, uint256 _lastGvz) external onlyOwner {
-        s_manualData = [_lastBtcScore, _lastEthScore, _lastGvz];
-    }
-    // delete after testings
-    // delete after testings
-    // delete after testings
 
     /**
      * @dev Calculates new allocations for BTC, ETH, and Gold based on recent sentiment scores and gold market volatility (GVZ).
@@ -160,9 +156,6 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
     function calculateAllocations() public view returns (uint256[] memory, uint256[] memory) {
         // Get the latest sentiment scores for BTC and ETH, and the latest GVZ value
         uint256[] memory latestData = i_offChainDataFetcher.getLastResponse();
-
-        // Delete after testings
-        // uint256[] memory latestData = s_manualData;
 
         _validateExternalData(latestData);
 
@@ -269,13 +262,13 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
         (, uint256[] memory currentAlloc) = getCurrentAllocations();
 
         // 3. Retrieve the total value of the portfolio in USD
-        uint256 totalPortfolioValue = getTotalPortfolioUsdValue();
+        uint256 totalPortfolioValue = getTotalPortfolioUsdcValue();
 
         // 4. Determine the USD value of each asset needed to achieve the target allocations
         uint256 newAllocLength = newAllocations.length;
         uint256[] memory tokensPriceInUsd = new uint256[](newAllocLength);
         for (uint256 i = 0; i < newAllocLength; i++) {
-            tokensPriceInUsd[i] = AssetValueCalculator.getAssetPriceInUsd6Dec(s_assets[i].priceFeed);
+            tokensPriceInUsd[i] = AssetValueCalculator.getAssetPriceInUsdc6Dec(s_assets[i].priceFeed);
         }
 
         // 5. Calculate the number of tokens required for each asset to reach the target value
@@ -325,12 +318,9 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
         uint256 tokensToMint = _calculateTokensToMint(usdcAmount);
         _mint(msg.sender, tokensToMint);
 
-        // Update investor record
-        Investor storage investor = s_investors[msg.sender];
-        investor.investedAmount += usdcAmount;
-
-        // Update total invested amount
-        s_totalInvestedInUsd += usdcAmount;
+        // Update investor record and total invested amount
+        s_investors[msg.sender].investedAmount += usdcAmount;
+        s_totalInvestedInUsdc += usdcAmount;
 
         // Buy the underlying assets based on the target allocation
         // Purchase the underlying assets
@@ -367,11 +357,9 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
         // Sell assets and calculate the USDC amount to be redeemed
         uint256 usdcRedeemedAmount = _sellAssetsAndCalculateRedemptionAmount(effectiveRedemptionPercentage);
 
-        // Update investor record
-        Investor storage investor = s_investors[msg.sender];
-        investor.redemeedAmount += usdcRedeemedAmount;
-
-        s_totalRedeemedInUsd += usdcRedeemedAmount;
+        // Update investor record and total redeemed amount
+        s_investors[msg.sender].redemeedAmount += usdcRedeemedAmount;
+        s_totalRedeemedInUsdc += usdcRedeemedAmount;
 
         // Transfer the redeemed USDC to the investor
         i_usdc.safeTransfer(msg.sender, usdcRedeemedAmount);
@@ -395,7 +383,7 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
             name: "Automated Portfolio Upkeep",
             encryptedEmail: "0x", // Leave as 0x if not using email notifications
             upkeepContract: address(this), // This contract's address
-            gasLimit: 500000, // Adjust based on your `performUpkeep` gas usage
+            gasLimit: 1000000, // Adjust based on your `performUpkeep` gas usage
             adminAddress: owner(), // Owner's address for upkeep management
             triggerType: 0, // Use 0 for conditional-based triggers
             checkData: "0x", // Optional: data for `checkUpkeep`
@@ -425,6 +413,13 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
         emit CustomUpkeepRegistered(upkeepID, address(this), owner());
 
         return upkeepID;
+    }
+
+    /**
+     * @notice Sets the address of the Chainlink Automation Upkeep Forwarder contract.
+     */
+    function setAutomationUpkeepForwarderContract(address _forwarderUpkeepContract) external onlyOwner {
+        s_forwarderUpkeepContract = _forwarderUpkeepContract;
     }
 
     /**
@@ -479,7 +474,7 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
      *   2. Buys assets where the token difference indicates a shortfall.
      * This sequential approach ensures that the necessary USDC is available from sales to fund subsequent purchases.
      */
-    function performUpkeep(bytes calldata performData) external override {
+    function performUpkeep(bytes calldata performData) external override onlyAllowed {
         // Decode the latest allocations, tokens difference, and fetched data
         (uint256[] memory newAllocations, int256[] memory tokensDifference, uint256[] memory newFetchedData) =
             abi.decode(performData, (uint256[], int256[], uint256[]));
@@ -498,14 +493,15 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
         // Rebalance the portfolio by buying/selling assets to match the new allocations
         // @dev In a real scenario, assets could be swapped, but for simplicity, we sell and buy them separately
         // First, sell assets to accumulate USDC
-        for (uint256 i = 0; i < tokensDifference.length; i++) {
+        uint256 tokensDifferenceLength = tokensDifference.length;
+        for (uint256 i = 0; i < tokensDifferenceLength; i++) {
             if (tokensDifference[i] < 0) {
                 _sellSingleAsset(i, uint256(-tokensDifference[i]));
             }
         }
 
         // Then, use the accumulated USDC to buy assets
-        for (uint256 i = 0; i < tokensDifference.length; i++) {
+        for (uint256 i = 0; i < tokensDifferenceLength; i++) {
             if (tokensDifference[i] > 0) {
                 _buySingleAsset(i, uint256(tokensDifference[i]));
             }
@@ -517,18 +513,18 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
     //////////////////////////////////////////////////////////////*/
 
     /// @notice Calculates the total USD value of all assets held by the portfolio using current market prices (with Chainlink Data Feeds).
-    function getTotalPortfolioUsdValue() public view returns (uint256 totalValue) {
+    function getTotalPortfolioUsdcValue() public view returns (uint256 totalValue) {
         uint256 assetsLength = s_assets.length;
         for (uint256 i = 0; i < assetsLength; i++) {
-            totalValue += AssetValueCalculator.getHeldAssetValueInUsd6Dec(
+            totalValue += AssetValueCalculator.getHeldAssetValueInUsdc6Dec(
                 s_assets[i].tokenAddress, s_assets[i].priceFeed, address(this)
             );
         }
     }
 
     /// @notice Returns the current value of one portfolio token (PMT) in USD, scaled to 6 decimal places.
-    function tokenValueInUsd6Dec() public view returns (uint256) {
-        return (getTotalPortfolioUsdValue() * WEIGHT_SCALE_18) / totalSupply();
+    function tokenValueInUsdc6Dec() public view returns (uint256) {
+        return (getTotalPortfolioUsdcValue() * WEIGHT_SCALE_18) / totalSupply();
     }
 
     /**
@@ -598,20 +594,6 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
         i_offChainDataFetcher = IOffchainDataFetcher(_offchainDataFetcher);
     }
 
-    // delete after testings
-    // delete after testings
-    // delete after testings
-    function updateAllAssetAllocationsManually(uint256[] memory newAllocations) external onlyOwner {
-        _validateAllocationArrayLength(newAllocations);
-        _validateTotalAllocation(newAllocations);
-
-        for (uint256 i = 0; i < newAllocations.length; i++) {
-            s_assets[i].currentAllocation = newAllocations[i];
-        }
-
-        emit PortfolioRebalanced(newAllocations);
-    }
-
     /*//////////////////////////////////////////////////////////////
                          INTERNAL FUNCTIONS
     //////////////////////////////////////////////////////////////*/
@@ -621,14 +603,14 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
         if (totalSupply() == 0) {
             return usdcAmount * INIT_TOKEN_PER_USD;
         } else {
-            return (usdcAmount * tokenValueInUsd6Dec() * WEIGHT_SCALE_6);
+            return (usdcAmount * tokenValueInUsdc6Dec() * WEIGHT_SCALE_6);
         }
     }
 
     /// @dev Buys a specified amount of an asset token after ensuring sufficient USDC allowance, adjusting the allowance if necessary.
     function _buySingleAsset(uint256 assetIndex, uint256 tokenAmount) internal {
         address tokenAddress = s_assets[assetIndex].tokenAddress;
-        uint256 tokenPrice6Dec = AssetValueCalculator.getAssetPriceInUsd6Dec(s_assets[assetIndex].priceFeed);
+        uint256 tokenPrice6Dec = AssetValueCalculator.getAssetPriceInUsdc6Dec(s_assets[assetIndex].priceFeed);
 
         // check current USDC allowance and increase if needed
         uint256 currentAllowance = i_usdc.allowance(address(this), tokenAddress);
