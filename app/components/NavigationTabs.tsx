@@ -28,14 +28,14 @@ const NavigationTabs = () => {
       >
         MY INVESTMENT
       </Link>
-      <Link
+      {/* <Link
         href="/HowItWorks"
         className={`pb-2 font-semibold border-b-2 hover:border-blue-500 ${isActive(
           "/HowItWorks"
         )}`}
       >
         HOW IT WORKS
-      </Link>
+      </Link> */}
     </div>
   );
 };

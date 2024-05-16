@@ -1,5 +1,5 @@
 export const portfolioManagerConfig = {
-  address: "0xE1Afb03E9DA78e09Ad8b60186243EB91847C68CB", // Example contract address, replace with actual address
+  address: "0x4F5EA1511E562C19CCd59e95Dc7d1F32EF7Eb45f", // Example contract address, replace with actual address
   abi: [
     {
       inputs: [

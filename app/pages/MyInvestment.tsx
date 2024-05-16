@@ -2,12 +2,15 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import type { NextPage } from "next";
 import Head from "next/head";
 import useFetchMyInvestmentData from "../hooks/useFetchMyInvestmentData";
+import useFetchInvestmentsLogs from "../hooks/useFetchInvestmentsLogs";
 import NavigationTabs from "../components/NavigationTabs";
 import Footer from "../components/Footer";
 import { useAccount } from "wagmi";
+import TxIcon from "../assets/TxIcon";
 
 const MyInvestment: NextPage = () => {
   const { investmentData, loading, error } = useFetchMyInvestmentData();
+  const { logs, loadingLogs, logsError } = useFetchInvestmentsLogs();
   const { isConnected } = useAccount();
 
   const renderInvestmentData = () => {
@@ -20,7 +23,7 @@ const MyInvestment: NextPage = () => {
 
     const userInvestmentValue =
       ownershipShare && totalPortfolioUsdcValue
-        ? `$ ${(
+        ? `USDC ${(
             parseFloat(ownershipShare) * parseFloat(totalPortfolioUsdcValue)
           ).toFixed(2)}`
         : "Data unavailable";
@@ -35,6 +38,58 @@ const MyInvestment: NextPage = () => {
         <div className="text-md">{formattedBalance}</div>
       </>
     );
+  };
+
+  const renderHistoryTable = () => {
+    if (!isConnected)
+      return (
+        <tr>
+          <td colSpan={5}>Please connect your account</td>
+        </tr>
+      );
+    if (loadingLogs)
+      return (
+        <tr>
+          <td colSpan={5}>Loading logs...</td>
+        </tr>
+      );
+    if (logsError)
+      return (
+        <tr>
+          <td colSpan={5}>Error loading logs: {logsError.message}</td>
+        </tr>
+      );
+    if (logs.length === 0)
+      return (
+        <tr>
+          <td colSpan={5}>No logs found.</td>
+        </tr>
+      );
+
+    return logs
+      .sort((a, b) => Number(b.blockNumber - a.blockNumber))
+      .map((log, index) => (
+        <tr key={index} className="text-sm border-b border-gray-200">
+          <td>{log.blockNumber.toString()}</td>
+          <td>{log.eventName === "Invested" ? "Invest" : "Redeem"}</td>
+          <td>
+            {(
+              Number(log.args.tokensMinted || log.args.tokensBurned) / 1e18
+            ).toFixed(2)}
+          </td>
+          <td>{(Number(log.args.usdcAmount) / 1e6).toFixed(2)} USDC</td>
+          <td className="py-2 text-center">
+            <a
+              href={`https://sepolia.etherscan.io/tx/${log.transactionHash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block"
+            >
+              <TxIcon />
+            </a>
+          </td>
+        </tr>
+      ));
   };
 
   return (
@@ -82,14 +137,14 @@ const MyInvestment: NextPage = () => {
               <table className="w-full text-center">
                 <thead>
                   <tr className="border-b border-gray-200">
-                    <th className="py-3">Date</th>
+                    <th className="py-3">Block #</th>
                     <th className="py-3">Type</th>
                     <th className="py-3">PMT tokens</th>
                     <th className="py-3">Value (USDC)</th>
                     <th className="py-3">Tx</th>
                   </tr>
                 </thead>
-                <tbody>{/* Rows generated from data */}</tbody>
+                <tbody>{renderHistoryTable()}</tbody>
               </table>
             </div>
           </div>

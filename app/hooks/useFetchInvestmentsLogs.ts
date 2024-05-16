@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { createPublicClient, http, parseAbiItem, stringify } from "viem";
 import { sepolia } from "wagmi/chains";
+import { portfolioManagerConfig } from "../src/abis";
 
-const useFetchLogs = () => {
-  const [logs, setLogs] = useState<any[]>([]); // Adjust based on the actual log structure
+const useFetchInvestmentsLogs = () => {
+  const [logs, setLogs] = useState<any[]>([]);
   const [loadingLogs, setLoadingLogs] = useState(false);
   const [logsError, setLogsError] = useState<Error | null>(null);
 
@@ -17,21 +18,24 @@ const useFetchLogs = () => {
         });
 
         const fetchedLogs = await publicClient.getLogs({
-          address: "0xE1Afb03E9DA78e09Ad8b60186243EB91847C68CB",
-          event: parseAbiItem(
-            "event PortfolioRebalanced(uint256 indexed, uint256 indexed, uint256 indexed)"
-          ),
-          fromBlock: BigInt(5909492), // Portfolio contract deployment block
+          address: portfolioManagerConfig.address,
+          events: [
+            parseAbiItem(
+              "event Invested(address indexed investor, uint256 indexed usdcAmount, uint256 indexed tokensMinted)"
+            ),
+            parseAbiItem(
+              "event Redeemed(address indexed investor, uint256 indexed usdcAmount, uint256 indexed tokensBurned)"
+            ),
+          ],
+          fromBlock: BigInt(5916208), // Adjust the starting block to your contract deployment block
         });
 
         console.log(stringify(fetchedLogs));
         setLogs(fetchedLogs);
       } catch (err) {
-        // Error type checking
         if (err instanceof Error) {
           setLogsError(err);
         } else {
-          // Handle cases where err may not be an Error object
           setLogsError(new Error("An unknown error occurred"));
         }
         console.error("Error fetching logs:", err);
@@ -46,4 +50,4 @@ const useFetchLogs = () => {
   return { logs, loadingLogs, logsError };
 };
 
-export default useFetchLogs;
+export default useFetchInvestmentsLogs;

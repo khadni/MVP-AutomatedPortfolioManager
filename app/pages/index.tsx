@@ -4,7 +4,7 @@ import Head from "next/head";
 import NavigationTabs from "../components/NavigationTabs";
 import Footer from "../components/Footer";
 import useFetchPortfolioData from "../hooks/useFetchPortfolioData";
-import useFetchLogs from "../hooks/useFetchLogs";
+import useFetchRebalancingLogs from "../hooks/useFetchRebalancingLogs";
 import TxIcon from "../assets/TxIcon";
 
 const Home: NextPage = () => {
@@ -19,7 +19,7 @@ const Home: NextPage = () => {
     isPending,
   } = useFetchPortfolioData();
 
-  const { logs, loadingLogs, logsError } = useFetchLogs();
+  const { logs, loadingLogs, logsError } = useFetchRebalancingLogs();
 
   return (
     <div className="flex flex-col min-h-screen">
