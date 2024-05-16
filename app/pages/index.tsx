@@ -5,7 +5,7 @@ import NavigationTabs from "../components/NavigationTabs";
 import Footer from "../components/Footer";
 import useFetchPortfolioData from "../hooks/useFetchPortfolioData";
 import useFetchLogs from "../hooks/useFetchLogs";
-import LinkIcon from "../assets/LinkIcon";
+import TxIcon from "../assets/TxIcon";
 
 const Home: NextPage = () => {
   const {
@@ -137,7 +137,7 @@ const Home: NextPage = () => {
                             rel="noopener noreferrer"
                             className="inline-block"
                           >
-                            <LinkIcon />
+                            <TxIcon />
                           </a>
                         </td>
                       </tr>

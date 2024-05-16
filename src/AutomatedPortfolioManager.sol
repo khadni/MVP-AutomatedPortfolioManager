@@ -49,6 +49,8 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
         uint256 indexed newMimicBTCAllocation,
         uint256 indexed newMimicETHAllocation
     );
+    event Invested(address indexed investor, uint256 indexed usdcAmount, uint256 indexed tokensMinted);
+    event Redeemed(address indexed investor, uint256 indexed usdcAmount, uint256 indexed tokensBurned);
 
     /*//////////////////////////////////////////////////////////////
                                 STATE
@@ -329,6 +331,8 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
         // Buy the underlying assets based on the target allocation
         // Purchase the underlying assets
         _purchaseAssets(usdcAmount);
+
+        emit Invested(msg.sender, usdcAmount, tokensToMint);
     }
 
     /**
@@ -367,6 +371,8 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
 
         // Transfer the redeemed USDC to the investor
         i_usdc.safeTransfer(msg.sender, usdcRedeemedAmount);
+
+        emit Redeemed(msg.sender, usdcRedeemedAmount, tokensToBurn);
     }
 
     /*//////////////////////////////////////////////////////////////

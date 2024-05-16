@@ -85,7 +85,7 @@ const MyInvestment: NextPage = () => {
                     <th className="py-3">Date</th>
                     <th className="py-3">Type</th>
                     <th className="py-3">PMT tokens</th>
-                    <th className="py-3">Value (USD)</th>
+                    <th className="py-3">Value (USDC)</th>
                     <th className="py-3">Tx</th>
                   </tr>
                 </thead>
