@@ -44,7 +44,11 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
     //////////////////////////////////////////////////////////////*/
 
     event CustomUpkeepRegistered(uint256 upkeepID, address contractAddress, address admin);
-    event PortfolioRebalanced(uint256[] newAllocations);
+    event PortfolioRebalanced(
+        uint256 indexed newMimicXAUAllocation,
+        uint256 indexed newMimicBTCAllocation,
+        uint256 indexed newMimicETHAllocation
+    );
 
     /*//////////////////////////////////////////////////////////////
                                 STATE
@@ -702,7 +706,7 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
             s_assets[i].currentAllocation = newAllocations[i];
         }
 
-        emit PortfolioRebalanced(newAllocations);
+        emit PortfolioRebalanced(newAllocations[0], newAllocations[1], newAllocations[2]);
     }
 
     /*//////////////////////////////////////////////////////////////
