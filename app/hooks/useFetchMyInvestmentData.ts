@@ -40,9 +40,9 @@ const useFetchMyInvestmentData = () => {
   });
 
   useEffect(() => {
-    console.log("Fetching data for address:", address);
+    // console.log("Fetching data for address:", address);
     if (!isPending && data) {
-      console.log("Raw contract data:", data);
+      // console.log("Raw contract data:", data);
       const balanceOf = data[0]?.result
         ? (Number(data[0].result.toString()) / 10 ** 18).toFixed(2)
         : null;

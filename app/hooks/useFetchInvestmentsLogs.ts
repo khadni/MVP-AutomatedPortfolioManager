@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { createPublicClient, http, parseAbiItem } from "viem";
+import { useAccount } from "wagmi";
 import { sepolia } from "wagmi/chains";
 import { portfolioManagerConfig } from "../src/abis";
 
@@ -9,8 +10,16 @@ const useFetchInvestmentsLogs = () => {
   const [logsError, setLogsError] = useState<Error | null>(null);
   const [totalUSDCCost, setTotalUSDCCost] = useState(0);
   const [totalPMTAcquired, setTotalPMTAcquired] = useState(0);
+  const { address } = useAccount();
 
   useEffect(() => {
+    if (!address) {
+      setLogs([]);
+      setTotalUSDCCost(0);
+      setTotalPMTAcquired(0);
+      return;
+    }
+
     const fetchLogs = async () => {
       setLoadingLogs(true);
       let localTotalUSDCCost = 0;
@@ -35,16 +44,20 @@ const useFetchInvestmentsLogs = () => {
           fromBlock: BigInt(5916208), // Adjust the starting block to your contract deployment block
         });
 
-        fetchedLogs.forEach((log) => {
+        const filteredLogs = fetchedLogs.filter(
+          (log) => log.args.investor === address
+        );
+
+        filteredLogs.forEach((log) => {
           const tokensMinted =
             log.eventName === "Invested"
-              ? Number(log.args["tokensMinted"]) / 1e18
+              ? Number(log.args.tokensMinted) / 1e18
               : 0;
           const tokensBurned =
             log.eventName === "Redeemed"
-              ? Number(log.args["tokensBurned"]) / 1e18
+              ? Number(log.args.tokensBurned) / 1e18
               : 0;
-          const usdcAmount = Number(log.args["usdcAmount"]) / 1e6;
+          const usdcAmount = Number(log.args.usdcAmount) / 1e6;
 
           if (log.eventName === "Invested") {
             localTotalUSDCCost += usdcAmount;
@@ -58,7 +71,7 @@ const useFetchInvestmentsLogs = () => {
           }
         });
 
-        setLogs(fetchedLogs);
+        setLogs(filteredLogs);
         setTotalUSDCCost(localTotalUSDCCost);
         setTotalPMTAcquired(localTotalPMTAcquired);
       } catch (err) {
@@ -74,7 +87,7 @@ const useFetchInvestmentsLogs = () => {
     };
 
     fetchLogs();
-  }, []);
+  }, [address]);
 
   return { logs, loadingLogs, logsError, totalUSDCCost, totalPMTAcquired };
 };

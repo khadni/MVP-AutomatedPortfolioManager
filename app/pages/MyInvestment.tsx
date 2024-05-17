@@ -29,11 +29,11 @@ const MyInvestment: NextPage = () => {
         ? `USDC ${(
             parseFloat(ownershipShare) * parseFloat(totalPortfolioUsdcValue)
           ).toFixed(2)}`
-        : "Data unavailable";
+        : "No investment found";
 
     const formattedBalance = balanceOf
       ? `${parseFloat(balanceOf).toFixed(2)} PMT`
-      : "Unavailable PMT";
+      : "";
 
     return (
       <>
@@ -47,13 +47,17 @@ const MyInvestment: NextPage = () => {
     if (!isConnected)
       return (
         <tr>
-          <td colSpan={5}>Please connect your account</td>
+          <td colSpan={5} className="pt-2">
+            Please connect your account
+          </td>
         </tr>
       );
     if (loadingLogs)
       return (
         <tr>
-          <td colSpan={5}>Loading logs...</td>
+          <td colSpan={5} className="pt-2">
+            Loading logs...
+          </td>
         </tr>
       );
     if (logsError)
@@ -65,7 +69,9 @@ const MyInvestment: NextPage = () => {
     if (logs.length === 0)
       return (
         <tr>
-          <td colSpan={5}>No logs found.</td>
+          <td colSpan={5} className="pt-2">
+            No logs found.
+          </td>
         </tr>
       );
 
@@ -96,17 +102,52 @@ const MyInvestment: NextPage = () => {
   };
 
   const calculateUnrealizedGain = () => {
-    if (!isConnected) return "Please connect your account";
-    if (loadingLogs || !totalPMTAcquired || !PMTTokenValue) return "Loading...";
+    if (!isConnected) {
+      return <div>Please connect your account</div>;
+    }
+    if (loadingLogs || !PMTTokenValue || totalPMTAcquired === null) {
+      return <div className="text-2xl font-bold">Loading...</div>;
+    }
+
+    if (totalUSDCCost === 0) {
+      return <div className="text-2xl font-bold">USDC 0.00</div>;
+    }
 
     const currentPMTValue = parseFloat(PMTTokenValue);
-    if (isNaN(currentPMTValue)) return "Invalid PMT token value";
+    if (isNaN(currentPMTValue)) {
+      return <div className="text-2xl font-bold">Invalid PMT token value</div>;
+    }
 
     const currentHoldingsValue = currentPMTValue * totalPMTAcquired;
     const investedValue = totalUSDCCost;
     const unrealizedGain = currentHoldingsValue - investedValue;
 
-    return `USDC ${unrealizedGain.toFixed(2)}`;
+    return (
+      <div className="text-2xl font-bold">USDC {unrealizedGain.toFixed(2)}</div>
+    );
+  };
+
+  const calculateUnrealizedGainPercent = () => {
+    if (
+      !isConnected ||
+      loadingLogs ||
+      !PMTTokenValue ||
+      totalPMTAcquired === null
+    ) {
+      return "";
+    }
+
+    if (totalUSDCCost === 0 || totalPMTAcquired === 0) {
+      return "0.00%";
+    }
+
+    const currentHoldingsValue = parseFloat(PMTTokenValue) * totalPMTAcquired;
+    const investedValue = totalUSDCCost;
+
+    const unrealizedGain = currentHoldingsValue - investedValue;
+    const unrealizedGainPercent = (unrealizedGain / investedValue) * 100;
+
+    return `${unrealizedGainPercent.toFixed(2)}%`;
   };
 
   return (
@@ -134,10 +175,8 @@ const MyInvestment: NextPage = () => {
             </div>
             <div className="p-4 border rounded-lg">
               <div className="text-gray-600">Unrealized gain (loss)</div>
-              <div className="text-2xl font-bold">
-                {calculateUnrealizedGain()}
-              </div>
-              <div className="text-md">3.19%</div>
+              <div>{calculateUnrealizedGain()}</div>
+              <div className="text-md">{calculateUnrealizedGainPercent()}</div>
             </div>
           </div>
 
