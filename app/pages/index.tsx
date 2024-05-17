@@ -113,7 +113,7 @@ const Home: NextPage = () => {
                 <tbody>
                   {loadingLogs ? (
                     <tr>
-                      <td colSpan={3} className="text-center">
+                      <td colSpan={3} className="pt-2 text-center">
                         Loading logs...
                       </td>
                     </tr>
@@ -145,7 +145,7 @@ const Home: NextPage = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={3} className="text-center">
+                      <td colSpan={3} className="pt-2 text-center">
                         No logs found.
                       </td>
                     </tr>

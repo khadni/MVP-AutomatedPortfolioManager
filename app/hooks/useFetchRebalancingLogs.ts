@@ -22,7 +22,7 @@ const useFetchRebalancingLogs = () => {
           event: parseAbiItem(
             "event PortfolioRebalanced(uint256 indexed, uint256 indexed, uint256 indexed)"
           ),
-          fromBlock: BigInt(5916208), // Adjust the starting block to your contract deployment block
+          fromBlock: BigInt(5920226), // Adjust the starting block to your contract deployment block
         });
 
         // console.log(stringify(fetchedLogs));

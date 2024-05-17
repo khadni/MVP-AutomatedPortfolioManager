@@ -41,7 +41,7 @@ const useFetchInvestmentsLogs = () => {
               "event Redeemed(address indexed investor, uint256 indexed usdcAmount, uint256 indexed tokensBurned)"
             ),
           ],
-          fromBlock: BigInt(5916208), // Adjust the starting block to your contract deployment block
+          fromBlock: BigInt(5920226), // Adjust the starting block to your contract deployment block
         });
 
         const filteredLogs = fetchedLogs.filter(

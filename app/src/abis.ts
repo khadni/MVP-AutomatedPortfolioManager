@@ -1,5 +1,5 @@
 export const portfolioManagerConfig = {
-  address: "0x4F5EA1511E562C19CCd59e95Dc7d1F32EF7Eb45f", // Example contract address, replace with actual address
+  address: "0xe409d1C2Dc88F5fa209D0940A6c022B2784c364F", // Example contract address, replace with actual address
   abi: [
     {
       inputs: [
@@ -139,6 +139,31 @@ export const portfolioManagerConfig = {
         {
           indexed: true,
           internalType: "address",
+          name: "investor",
+          type: "address",
+        },
+        {
+          indexed: true,
+          internalType: "uint256",
+          name: "usdcAmount",
+          type: "uint256",
+        },
+        {
+          indexed: true,
+          internalType: "uint256",
+          name: "tokensMinted",
+          type: "uint256",
+        },
+      ],
+      name: "Invested",
+      type: "event",
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: "address",
           name: "previousOwner",
           type: "address",
         },
@@ -175,6 +200,31 @@ export const portfolioManagerConfig = {
         },
       ],
       name: "PortfolioRebalanced",
+      type: "event",
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: "address",
+          name: "investor",
+          type: "address",
+        },
+        {
+          indexed: true,
+          internalType: "uint256",
+          name: "usdcAmount",
+          type: "uint256",
+        },
+        {
+          indexed: true,
+          internalType: "uint256",
+          name: "tokensBurned",
+          type: "uint256",
+        },
+      ],
+      name: "Redeemed",
       type: "event",
     },
     {

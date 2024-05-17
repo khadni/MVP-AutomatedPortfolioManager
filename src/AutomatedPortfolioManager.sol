@@ -613,7 +613,7 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
         if (totalSupply() == 0) {
             return usdcAmount * INIT_TOKEN_PER_USD;
         } else {
-            return (usdcAmount * tokenValueInUsdc6Dec() * WEIGHT_SCALE_6);
+            return (usdcAmount * WEIGHT_SCALE_18 / tokenValueInUsdc6Dec());
         }
     }
 
