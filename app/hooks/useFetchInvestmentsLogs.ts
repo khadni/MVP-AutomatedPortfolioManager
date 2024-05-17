@@ -50,23 +50,16 @@ const useFetchInvestmentsLogs = () => {
 
         filteredLogs.forEach((log) => {
           const tokensMinted =
-            log.eventName === "Invested"
-              ? Number(log.args.tokensMinted) / 1e18
-              : 0;
+            log.eventName === "Invested" ? Number(log.args.tokensMinted) : 0;
           const tokensBurned =
-            log.eventName === "Redeemed"
-              ? Number(log.args.tokensBurned) / 1e18
-              : 0;
-          const usdcAmount = Number(log.args.usdcAmount) / 1e6;
+            log.eventName === "Redeemed" ? Number(log.args.tokensBurned) : 0;
+          const usdcAmount = Number(log.args.usdcAmount);
 
           if (log.eventName === "Invested") {
             localTotalUSDCCost += usdcAmount;
             localTotalPMTAcquired += tokensMinted;
           } else if (log.eventName === "Redeemed") {
-            const averageCostPerToken =
-              localTotalUSDCCost / localTotalPMTAcquired;
-            const redeemedUSDValue = tokensBurned * averageCostPerToken;
-            localTotalUSDCCost -= redeemedUSDValue;
+            localTotalUSDCCost -= usdcAmount;
             localTotalPMTAcquired -= tokensBurned;
           }
         });

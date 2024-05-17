@@ -18,21 +18,17 @@ const MyInvestment: NextPage = () => {
 
   const renderInvestmentData = () => {
     if (!isConnected) return <div>Please connect your account</div>;
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <div className="text-2xl font-bold">Loading...</div>;
     if (error) return <div>Error: {error.message}</div>;
 
-    const { balanceOf, ownershipShare, totalPortfolioUsdcValue } =
-      investmentData;
+    const { balanceOf, userInvestment } = investmentData;
 
-    const userInvestmentValue =
-      ownershipShare && totalPortfolioUsdcValue
-        ? `USDC ${(
-            parseFloat(ownershipShare) * parseFloat(totalPortfolioUsdcValue)
-          ).toFixed(2)}`
-        : "No investment found";
+    const userInvestmentValue = userInvestment
+      ? `USDC ${(userInvestment / 10 ** 12).toFixed(2)}`
+      : "No investment found";
 
     const formattedBalance = balanceOf
-      ? `${parseFloat(balanceOf).toFixed(2)} PMT`
+      ? `${(balanceOf / 10 ** 18).toFixed(2)} PMT`
       : "";
 
     return (
@@ -113,14 +109,9 @@ const MyInvestment: NextPage = () => {
       return <div className="text-2xl font-bold">USDC 0.00</div>;
     }
 
-    const currentPMTValue = parseFloat(PMTTokenValue);
-    if (isNaN(currentPMTValue)) {
-      return <div className="text-2xl font-bold">Invalid PMT token value</div>;
-    }
+    const currentHoldingsValue = (PMTTokenValue * totalPMTAcquired) / 1e24;
 
-    const currentHoldingsValue = currentPMTValue * totalPMTAcquired;
-    const investedValue = totalUSDCCost;
-    const unrealizedGain = currentHoldingsValue - investedValue;
+    const unrealizedGain = currentHoldingsValue - totalUSDCCost / 1e6;
 
     return (
       <div className="text-2xl font-bold">USDC {unrealizedGain.toFixed(2)}</div>
@@ -141,11 +132,10 @@ const MyInvestment: NextPage = () => {
       return "0.00%";
     }
 
-    const currentHoldingsValue = parseFloat(PMTTokenValue) * totalPMTAcquired;
-    const investedValue = totalUSDCCost;
+    const currentHoldingsValue = PMTTokenValue * totalPMTAcquired;
 
-    const unrealizedGain = currentHoldingsValue - investedValue;
-    const unrealizedGainPercent = (unrealizedGain / investedValue) * 100;
+    const unrealizedGainPercent =
+      (currentHoldingsValue / 1e18 / totalUSDCCost - 1) * 100;
 
     return `${unrealizedGainPercent.toFixed(2)}%`;
   };

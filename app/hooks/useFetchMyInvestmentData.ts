@@ -4,9 +4,10 @@ import { portfolioManagerConfig } from "../src/abis";
 import { useAccount } from "wagmi";
 
 interface MyInvestmentData {
-  balanceOf: string | null;
-  ownershipShare: string | null;
-  totalPortfolioUsdcValue: string | null;
+  balanceOf: number | null;
+  ownershipShare: number | null;
+  totalPortfolioUsdcValue: number | null;
+  userInvestment: number | null;
 }
 
 const useFetchMyInvestmentData = () => {
@@ -15,6 +16,7 @@ const useFetchMyInvestmentData = () => {
     balanceOf: null,
     ownershipShare: null,
     totalPortfolioUsdcValue: null,
+    userInvestment: null,
   });
   const [loading, setLoading] = useState(false);
 
@@ -40,23 +42,23 @@ const useFetchMyInvestmentData = () => {
   });
 
   useEffect(() => {
-    // console.log("Fetching data for address:", address);
     if (!isPending && data) {
-      // console.log("Raw contract data:", data);
-      const balanceOf = data[0]?.result
-        ? (Number(data[0].result.toString()) / 10 ** 18).toFixed(2)
-        : null;
-      const ownershipShare = data[1]?.result
-        ? (Number(data[1].result.toString()) / 10 ** 6).toFixed(2)
-        : null;
+      const balanceOf = data[0]?.result ? Number(data[0].result) : null;
+      const ownershipShare = data[1]?.result ? Number(data[1].result) : null;
       const totalPortfolioUsdcValue = data[2]?.result
-        ? (Number(data[2].result.toString()) / 10 ** 6).toFixed(2)
+        ? Number(data[2].result)
         : null;
+
+      const userInvestment =
+        ownershipShare && totalPortfolioUsdcValue
+          ? ownershipShare * totalPortfolioUsdcValue
+          : null;
 
       setInvestmentData({
         balanceOf,
         ownershipShare,
         totalPortfolioUsdcValue,
+        userInvestment,
       });
     }
 

@@ -4,7 +4,7 @@ import { portfolioManagerConfig } from "../src/abis";
 
 interface PortfolioData {
   portfolioValue: string | null;
-  PMTTokenValue: string | null;
+  PMTTokenValue: number | null;
   PMTTotalSupply: string | null;
   MimicXAUAlloc: string | null;
   MimicBTCAlloc: string | null;
@@ -58,10 +58,7 @@ const useFetchPortfolioData = () => {
           portfolioVal !== null
             ? (Number(portfolioVal) / 10 ** 6).toFixed(2)
             : null,
-        PMTTokenValue:
-          PMTTokenVal !== null
-            ? (Number(PMTTokenVal) / 10 ** 6).toFixed(2)
-            : null,
+        PMTTokenValue: PMTTokenVal !== null ? Number(PMTTokenVal) : null,
         PMTTotalSupply:
           PMTTotalSup !== null
             ? (Number(PMTTotalSup) / 10 ** 18).toFixed(2)

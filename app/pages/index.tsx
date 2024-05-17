@@ -19,7 +19,12 @@ const Home: NextPage = () => {
     isPending,
   } = useFetchPortfolioData();
 
-  const { logs, loadingLogs, logsError } = useFetchRebalancingLogs();
+  const { logs, loadingLogs } = useFetchRebalancingLogs();
+
+  const formattedPMTTokenValue =
+    PMTTokenValue !== null
+      ? `${(PMTTokenValue / 1e6).toFixed(2)}`
+      : "Unavailable";
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -50,7 +55,11 @@ const Home: NextPage = () => {
             <div className="p-4 border rounded-lg">
               <div className="text-gray-600">Portfolio token (PMT) value</div>
               <div className="text-2xl font-bold">
-                {isPending ? <span>Loading...</span> : `USDC ${PMTTokenValue}`}
+                {isPending ? (
+                  <span>Loading...</span>
+                ) : (
+                  `USDC ${formattedPMTTokenValue}`
+                )}
               </div>
             </div>
             <div className="p-4 border rounded-lg">
