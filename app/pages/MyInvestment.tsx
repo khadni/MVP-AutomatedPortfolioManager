@@ -104,13 +104,13 @@ const MyInvestment: NextPage = () => {
       </Head>
 
       <main className="flex-grow">
-        <div className="max-w-4xl p-6 mx-auto bg-white">
+        <div className="max-w-4xl p-4 mx-auto bg-white sm:p-6">
           <div className="flex justify-center mb-24">
             <ConnectButton />
           </div>
           <NavigationTabs />
 
-          <div className="grid grid-cols-2 gap-6 mb-6">
+          <div className="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2">
             <div className="p-4 border rounded-lg">
               <div className="text-gray-600 text-md">My investment</div>
               {renderInvestmentData()}
@@ -122,7 +122,7 @@ const MyInvestment: NextPage = () => {
             </div>
           </div>
 
-          <div className="flex justify-center mb-6 space-x-4">
+          <div className="flex flex-wrap justify-center gap-4 mb-6">
             <button className="px-6 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
               INVEST
             </button>
@@ -130,11 +130,10 @@ const MyInvestment: NextPage = () => {
               REDEEM
             </button>
           </div>
-
-          <div className="p-4 mb-6 border rounded-lg">
+          <div className="p-4 border rounded-lg">
             <div className="mb-4 font-semibold text-md">History</div>
             <div className="overflow-x-auto">
-              <table className="w-full text-center">
+              <table className="w-full text-sm text-center">
                 <thead>
                   <tr className="border-b border-gray-200">
                     <th className="py-3">Block #</th>

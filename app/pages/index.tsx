@@ -33,14 +33,14 @@ const Home: NextPage = () => {
       </Head>
 
       <main className="flex-grow">
-        <div className="max-w-4xl p-6 mx-auto bg-white">
+        <div className="max-w-4xl p-4 mx-auto bg-white sm:p-6">
           <div className="flex justify-center mb-24">
             <ConnectButton />
           </div>
           {/* Navigation Tabs */}
           <NavigationTabs />
           {/* Portfolio and Token Value */}
-          <div className="grid grid-cols-3 gap-6 mb-6">
+          <div className="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
             <div className="p-4 border rounded-lg">
               <div className="text-gray-600 text-md">Portfolio total value</div>
               <div className="text-2xl font-bold">
@@ -61,11 +61,11 @@ const Home: NextPage = () => {
             </div>
           </div>
           {/* Current Portfolio Assets */}
-          <div className="p-4 mb-6 border rounded-lg">
+          <div className="p-4 mb-4 border rounded-lg">
             <div className="mb-4 font-semibold text-md">
               Current Portfolio Asset Allocations
             </div>
-            <div className="grid grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               {isPending ? (
                 <div>Loading...</div>
               ) : (
@@ -92,12 +92,12 @@ const Home: NextPage = () => {
             </div>
           </div>
           {/* Rebalancing History Table */}
-          <div className="p-4 mb-6 border rounded-lg">
+          <div className="p-4 border rounded-lg">
             <div className="mb-4 font-semibold text-md">
               Portfolio Rebalancing History
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full text-center">
+              <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-200">
                     <th className="py-3">Block #</th>
@@ -113,16 +113,17 @@ const Home: NextPage = () => {
                 <tbody>
                   {loadingLogs ? (
                     <tr>
-                      <td colSpan={3}>Loading logs...</td>
+                      <td colSpan={3} className="text-center">
+                        Loading logs...
+                      </td>
                     </tr>
                   ) : logs.length > 0 ? (
                     logs.map((log, index) => (
-                      <tr
-                        key={index}
-                        className="text-sm border-b border-gray-200"
-                      >
-                        <td className="py-2">{log.blockNumber.toString()}</td>
-                        <td className="py-2">
+                      <tr key={index} className="border-b border-gray-200">
+                        <td className="py-2 text-center">
+                          {log.blockNumber.toString()}
+                        </td>
+                        <td className="py-2 text-center">
                           {log.args
                             .map(
                               (arg: string) =>
@@ -144,7 +145,9 @@ const Home: NextPage = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={3}>No logs found.</td>
+                      <td colSpan={3} className="text-center">
+                        No logs found.
+                      </td>
                     </tr>
                   )}
                 </tbody>

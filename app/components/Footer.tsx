@@ -1,11 +1,11 @@
 const Footer = () => {
   return (
-    <footer className="flex justify-center items-center w-full p-4 border-t border-gray-200">
+    <footer className="flex items-center justify-center w-full px-4 py-6 border-t border-gray-200">
       <a
         href="https://chain.link/"
         target="_blank"
         rel="noopener noreferrer"
-        className="flex justify-center items-center w-full"
+        className="flex items-center justify-center w-full"
       >
         Made with ❤️ by Chainlink Labs
       </a>
