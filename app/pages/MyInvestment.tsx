@@ -1,6 +1,7 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import type { NextPage } from "next";
 import Head from "next/head";
+import useFetchPortfolioData from "../hooks/useFetchPortfolioData";
 import useFetchMyInvestmentData from "../hooks/useFetchMyInvestmentData";
 import useFetchInvestmentsLogs from "../hooks/useFetchInvestmentsLogs";
 import NavigationTabs from "../components/NavigationTabs";
@@ -10,7 +11,9 @@ import TxIcon from "../assets/TxIcon";
 
 const MyInvestment: NextPage = () => {
   const { investmentData, loading, error } = useFetchMyInvestmentData();
-  const { logs, loadingLogs, logsError } = useFetchInvestmentsLogs();
+  const { logs, loadingLogs, logsError, totalUSDCCost, totalPMTAcquired } =
+    useFetchInvestmentsLogs();
+  const { PMTTokenValue } = useFetchPortfolioData();
   const { isConnected } = useAccount();
 
   const renderInvestmentData = () => {
@@ -92,6 +95,20 @@ const MyInvestment: NextPage = () => {
       ));
   };
 
+  const calculateUnrealizedGain = () => {
+    if (!isConnected) return "Please connect your account";
+    if (loadingLogs || !totalPMTAcquired || !PMTTokenValue) return "Loading...";
+
+    const currentPMTValue = parseFloat(PMTTokenValue);
+    if (isNaN(currentPMTValue)) return "Invalid PMT token value";
+
+    const currentHoldingsValue = currentPMTValue * totalPMTAcquired;
+    const investedValue = totalUSDCCost;
+    const unrealizedGain = currentHoldingsValue - investedValue;
+
+    return `USDC ${unrealizedGain.toFixed(2)}`;
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <Head>
@@ -117,7 +134,9 @@ const MyInvestment: NextPage = () => {
             </div>
             <div className="p-4 border rounded-lg">
               <div className="text-gray-600">Unrealized gain (loss)</div>
-              <div className="text-2xl font-bold">$366.73</div>
+              <div className="text-2xl font-bold">
+                {calculateUnrealizedGain()}
+              </div>
               <div className="text-md">3.19%</div>
             </div>
           </div>

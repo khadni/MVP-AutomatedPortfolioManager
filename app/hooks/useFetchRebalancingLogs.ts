@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createPublicClient, http, parseAbiItem, stringify } from "viem";
+import { createPublicClient, http, parseAbiItem } from "viem";
 import { sepolia } from "wagmi/chains";
 import { portfolioManagerConfig } from "../src/abis";
 
