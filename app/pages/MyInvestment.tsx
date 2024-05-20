@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import NavigationTabs from "../components/NavigationTabs";
+import Disclaimer from "../components/Disclaimer";
 import Footer from "../components/Footer";
 import useFetchPortfolioData from "../hooks/useFetchPortfolioData";
 import useFetchMyInvestmentData from "../hooks/useFetchMyInvestmentData";
@@ -160,6 +161,7 @@ const MyInvestment: NextPage = () => {
       <main className="flex-grow">
         <div className="max-w-4xl p-4 mx-auto bg-white sm:p-6">
           <NavigationTabs />
+          <Disclaimer />
           <div className="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2">
             <div className="p-4 border rounded-lg">
               <div className="text-gray-600 text-md">My investment</div>

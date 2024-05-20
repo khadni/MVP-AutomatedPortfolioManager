@@ -3,6 +3,7 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import NavigationTabs from "../components/NavigationTabs";
 import ChainlinkLinks from "../components/ChainlinkLinks";
+import Disclaimer from "../components/Disclaimer";
 import Footer from "../components/Footer";
 import useFetchPortfolioData from "../hooks/useFetchPortfolioData";
 import useFetchRebalancingLogs from "../hooks/useFetchRebalancingLogs";
@@ -47,6 +48,7 @@ const Home: NextPage = () => {
       <main className="flex-grow">
         <div className="max-w-4xl p-4 mx-auto bg-white sm:p-6">
           <NavigationTabs />
+          <Disclaimer />
           {/* Portfolio and Token Value */}
           <div className="grid grid-cols-1 gap-2 mb-4 sm:grid-cols-4">
             <div className="p-4 border rounded-lg">
