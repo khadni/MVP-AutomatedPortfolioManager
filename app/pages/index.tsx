@@ -128,7 +128,40 @@ const Home: NextPage = () => {
                     <th className="py-3">
                       Allocations
                       <div className="text-xs font-light">
-                        (mGold / mWBTC / mETH)
+                        (
+                        <a
+                          href={
+                            "https://sepolia.etherscan.io/address/0xb809576570dD4d9c33f5a6F370Fb542968be5804#code"
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:underline"
+                        >
+                          mGold
+                        </a>{" "}
+                        /{" "}
+                        <a
+                          href={
+                            "https://sepolia.etherscan.io/address/0x263699bc60C44477e5AcDfB1726BA5E89De9134B#code"
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:underline"
+                        >
+                          mWBTC
+                        </a>{" "}
+                        /
+                        <a
+                          href={
+                            "https://sepolia.etherscan.io/address/0x0F542B5D65aa3c29e6046DD219B27AE00b8371b0#code"
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:underline"
+                        >
+                          mETH
+                        </a>
+                        )
                       </div>
                     </th>
                     <th className="py-3">Tx</th>
