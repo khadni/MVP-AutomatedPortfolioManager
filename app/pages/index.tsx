@@ -26,9 +26,12 @@ const Home: NextPage = () => {
       ? `${(PMTTokenValue / 1e6).toFixed(2)}`
       : "Unavailable";
 
-  const historicalReturn = formattedPMTTokenValue
-    ? `${((parseFloat(formattedPMTTokenValue) - 1) * 100).toFixed(2)}%`
-    : "Unavailable";
+  const pmtTokenValueNum = PMTTokenValue !== null ? PMTTokenValue / 1e6 : null;
+
+  const historicalReturn =
+    pmtTokenValueNum !== null
+      ? `${((pmtTokenValueNum - 1) * 100).toFixed(2)}%`
+      : "Unavailable";
 
   return (
     <div className="flex flex-col min-h-screen">
