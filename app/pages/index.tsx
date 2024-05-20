@@ -1,6 +1,8 @@
+// Index page code with the added links section
 import type { NextPage } from "next";
 import Head from "next/head";
 import NavigationTabs from "../components/NavigationTabs";
+import ChainlinkLinks from "../components/ChainlinkLinks";
 import Footer from "../components/Footer";
 import useFetchPortfolioData from "../hooks/useFetchPortfolioData";
 import useFetchRebalancingLogs from "../hooks/useFetchRebalancingLogs";
@@ -37,7 +39,6 @@ const Home: NextPage = () => {
 
       <main className="flex-grow">
         <div className="max-w-4xl p-4 mx-auto bg-white sm:p-6">
-          {/* Navigation Tabs */}
           <NavigationTabs />
           {/* Portfolio and Token Value */}
           <div className="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
@@ -95,6 +96,8 @@ const Home: NextPage = () => {
               )}
             </div>
           </div>
+          {/* Important Links Section */}
+          <ChainlinkLinks />
           {/* Rebalancing History Table */}
           <div className="p-4 border rounded-lg">
             <div className="mb-4 font-semibold text-md">
