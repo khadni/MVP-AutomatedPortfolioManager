@@ -10,42 +10,37 @@ const ChainlinkLinks = () => {
       <div className="mb-2 text-sm font-semibold text-gray-700">
         Deployed contracts on Ethereum Sepolia
       </div>
-
-      <div className="mb-4 text-sm">
-        <ul className="pl-5 list-disc">
-          <li>
-            <a
-              href={`https://sepolia.etherscan.io/address/${portfolioManagerConfig.address}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 hover:underline"
-            >
-              Automated Portfolio Manager
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://sepolia.etherscan.io/address/0x90f1C06EA294ce2246b14a4C48a80A2e2830d5E7#code"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 hover:underline"
-            >
-              OffchainDataFetcher
-            </a>
-          </li>
-        </ul>
-      </div>
-      <div className="grid grid-cols-2 gap-4 mt-6">
+      <ul className="pl-5 list-disc">
+        <li>
+          <a
+            href={`https://sepolia.etherscan.io/address/${portfolioManagerConfig.address}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:underline"
+          >
+            Automated Portfolio Manager
+          </a>
+        </li>
+        <li>
+          <a
+            href="https://sepolia.etherscan.io/address/0x90f1C06EA294ce2246b14a4C48a80A2e2830d5E7#code"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:underline"
+          >
+            OffchainDataFetcher
+          </a>
+        </li>
+      </ul>
+      <div className="grid grid-cols-1 gap-4 mt-6 md:grid-cols-2">
         <div>
-          <div className="flex justify-center mb-2">
-            <div className="flex items-center">
-              <div className="mr-3">
-                <ChainlinkAutomationLogo />
-              </div>
-              <h3 className="text-sm font-semibold text-gray-700">
-                Chainlink Automation
-              </h3>
+          <div className="flex items-center mb-2 md:justify-center">
+            <div className="mr-3">
+              <ChainlinkAutomationLogo />
             </div>
+            <h3 className="text-sm font-semibold text-gray-700">
+              Chainlink Automation
+            </h3>
           </div>
           <ul className="pl-5 text-sm list-disc">
             <li>
@@ -71,15 +66,13 @@ const ChainlinkLinks = () => {
           </ul>
         </div>
         <div>
-          <div className="flex justify-center mb-2">
-            <div className="flex items-center">
-              <div className="mr-3">
-                <ChainlinkFunctionsLogo />
-              </div>
-              <h3 className="text-sm font-semibold text-gray-700">
-                Chainlink Functions
-              </h3>
+          <div className="flex items-center mb-2 md:justify-center">
+            <div className="mr-3">
+              <ChainlinkFunctionsLogo />
             </div>
+            <h3 className="text-sm font-semibold text-gray-700">
+              Chainlink Functions
+            </h3>
           </div>
           <ul className="pl-5 text-sm list-disc">
             <li>
