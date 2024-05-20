@@ -10,7 +10,7 @@ const ChainlinkLinks = () => {
       <div className="mb-2 text-sm font-semibold text-gray-700">
         Deployed contracts on Ethereum Sepolia
       </div>
-      <ul className="pl-5 list-disc">
+      <ul className="pl-5 text-sm list-disc">
         <li>
           <a
             href={`https://sepolia.etherscan.io/address/${portfolioManagerConfig.address}`}
