@@ -21,9 +21,9 @@ const NavigationTabs = () => {
         PORTFOLIO INFO
       </Link>
       <Link
-        href="/myinvestment"
+        href="/MyInvestment"
         className={`pb-2 font-semibold border-b-2 hover:border-blue-500 ${isActive(
-          "/myinvestment"
+          "/MyInvestment"
         )}`}
       >
         MY INVESTMENT
