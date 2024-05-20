@@ -1,4 +1,3 @@
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import type { NextPage } from "next";
 import Head from "next/head";
 import NavigationTabs from "../components/NavigationTabs";
@@ -18,12 +17,12 @@ const MyInvestment: NextPage = () => {
   const { PMTTokenValue } = useFetchPortfolioData();
   const { isConnected } = useAccount();
 
+  const { balanceOf, userInvestment } = investmentData;
+
   const renderInvestmentData = () => {
     if (!isConnected) return <div>Please connect your wallet</div>;
     if (loading) return <div className="text-2xl font-bold">Loading...</div>;
     if (error) return <div>Error: {error.message}</div>;
-
-    const { balanceOf, userInvestment } = investmentData;
 
     const userInvestmentValue = userInvestment
       ? `USDC ${(userInvestment / 10 ** 12).toFixed(2)}`
@@ -111,9 +110,12 @@ const MyInvestment: NextPage = () => {
       return <div className="text-2xl font-bold">USDC 0.00</div>;
     }
 
-    const currentHoldingsValue = (PMTTokenValue * totalPMTAcquired) / 1e24;
+    const currentHoldingsValue = (PMTTokenValue * (balanceOf || 0)) / 1e24;
 
-    const unrealizedGain = currentHoldingsValue - totalUSDCCost / 1e6;
+    const unrealizedGain =
+      currentHoldingsValue === 0
+        ? 0
+        : currentHoldingsValue - totalUSDCCost / 1e6;
 
     return (
       <div className="text-2xl font-bold">USDC {unrealizedGain.toFixed(2)}</div>
@@ -134,10 +136,12 @@ const MyInvestment: NextPage = () => {
       return "0.00%";
     }
 
-    const currentHoldingsValue = PMTTokenValue * totalPMTAcquired;
+    const currentHoldingsValue = PMTTokenValue * (balanceOf || 0);
 
     const unrealizedGainPercent =
-      (currentHoldingsValue / 1e18 / totalUSDCCost - 1) * 100;
+      currentHoldingsValue === 0
+        ? 0
+        : (currentHoldingsValue / 1e18 / totalUSDCCost - 1) * 100;
 
     return `${unrealizedGainPercent.toFixed(2)}%`;
   };
@@ -155,9 +159,6 @@ const MyInvestment: NextPage = () => {
 
       <main className="flex-grow">
         <div className="max-w-4xl p-4 mx-auto bg-white sm:p-6">
-          <div className="flex justify-center mb-24">
-            <ConnectButton />
-          </div>
           <NavigationTabs />
 
           <div className="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2">
@@ -174,11 +175,11 @@ const MyInvestment: NextPage = () => {
 
           <div className="flex flex-wrap justify-center gap-4 mb-6">
             {isConnected ? (
-              <div className="flex w-full">
-                <div className="w-1/2">
+              <div className="flex flex-col w-full md:flex-row">
+                <div className="w-full md:w-1/2">
                   <InvestForm />
                 </div>
-                <div className="w-1/2">
+                <div className="w-full md:w-1/2">
                   <RedeemForm />
                 </div>
               </div>

@@ -1,4 +1,3 @@
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import type { NextPage } from "next";
 import Head from "next/head";
 import NavigationTabs from "../components/NavigationTabs";
@@ -15,7 +14,6 @@ const Home: NextPage = () => {
     MimicXAUAlloc,
     MimicBTCAlloc,
     MimicETHAlloc,
-    error,
     isPending,
   } = useFetchPortfolioData();
 
@@ -39,9 +37,6 @@ const Home: NextPage = () => {
 
       <main className="flex-grow">
         <div className="max-w-4xl p-4 mx-auto bg-white sm:p-6">
-          <div className="flex justify-center mb-24">
-            <ConnectButton />
-          </div>
           {/* Navigation Tabs */}
           <NavigationTabs />
           {/* Portfolio and Token Value */}
