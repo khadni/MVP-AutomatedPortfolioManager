@@ -34,7 +34,7 @@ const ChainlinkLinks = () => {
       </ul>
       <div className="grid grid-cols-1 gap-4 mt-6 md:grid-cols-2">
         <div>
-          <div className="flex items-center mb-2 md:justify-center">
+          <div className="flex items-center justify-center mb-2">
             <div className="mr-3">
               <ChainlinkAutomationLogo />
             </div>
@@ -66,7 +66,7 @@ const ChainlinkLinks = () => {
           </ul>
         </div>
         <div>
-          <div className="flex items-center mb-2 md:justify-center">
+          <div className="flex items-center justify-center mb-2">
             <div className="mr-3">
               <ChainlinkFunctionsLogo />
             </div>
