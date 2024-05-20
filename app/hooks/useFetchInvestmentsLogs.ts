@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { createPublicClient, http, parseAbiItem } from "viem";
 import { useAccount } from "wagmi";
 import { sepolia } from "wagmi/chains";
-import { portfolioManagerConfig } from "../src/abis";
+import { portfolioManagerConfig } from "../src/portfolioManagerConfig";
 
 const useFetchInvestmentsLogs = () => {
   const [logs, setLogs] = useState<any[]>([]);

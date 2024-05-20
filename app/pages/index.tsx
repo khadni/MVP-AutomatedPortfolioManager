@@ -127,31 +127,33 @@ const Home: NextPage = () => {
                       </td>
                     </tr>
                   ) : logs.length > 0 ? (
-                    logs.map((log, index) => (
-                      <tr key={index} className="border-b border-gray-200">
-                        <td className="py-2 text-center">
-                          {log.blockNumber.toString()}
-                        </td>
-                        <td className="py-2 text-center">
-                          {log.args
-                            .map(
-                              (arg: string) =>
-                                (parseFloat(arg) / 10000).toFixed(2) + "%"
-                            )
-                            .join(" / ")}
-                        </td>
-                        <td className="py-2 text-center">
-                          <a
-                            href={`https://sepolia.etherscan.io/tx/${log.transactionHash}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-block"
-                          >
-                            <TxIcon />
-                          </a>
-                        </td>
-                      </tr>
-                    ))
+                    logs
+                      .sort((a, b) => Number(b.blockNumber - a.blockNumber))
+                      .map((log, index) => (
+                        <tr key={index} className="border-b border-gray-200">
+                          <td className="py-2 text-center">
+                            {log.blockNumber.toString()}
+                          </td>
+                          <td className="py-2 text-center">
+                            {log.args
+                              .map(
+                                (arg: string) =>
+                                  (parseFloat(arg) / 1e4).toFixed(2) + "%"
+                              )
+                              .join(" / ")}
+                          </td>
+                          <td className="py-2 text-center">
+                            <a
+                              href={`https://sepolia.etherscan.io/tx/${log.transactionHash}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-block"
+                            >
+                              <TxIcon />
+                            </a>
+                          </td>
+                        </tr>
+                      ))
                   ) : (
                     <tr>
                       <td colSpan={3} className="pt-2 text-center">

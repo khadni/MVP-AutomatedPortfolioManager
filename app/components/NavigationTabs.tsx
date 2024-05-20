@@ -6,8 +6,8 @@ const NavigationTabs = () => {
 
   const isActive = (pathname: string) => {
     return router.pathname === pathname
-      ? "border-blue-500" // Active state color
-      : "border-transparent"; // Default state color
+      ? "border-blue-500"
+      : "border-transparent";
   };
 
   return (
@@ -21,9 +21,9 @@ const NavigationTabs = () => {
         PORTFOLIO INFO
       </Link>
       <Link
-        href="/MyInvestment"
+        href="/myinvestment"
         className={`pb-2 font-semibold border-b-2 hover:border-blue-500 ${isActive(
-          "/MyInvestment"
+          "/myinvestment"
         )}`}
       >
         MY INVESTMENT

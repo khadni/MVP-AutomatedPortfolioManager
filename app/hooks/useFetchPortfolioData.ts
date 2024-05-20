@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useReadContracts } from "wagmi";
-import { portfolioManagerConfig } from "../src/abis";
+import { portfolioManagerConfig } from "../src/portfolioManagerConfig";
 
 interface PortfolioData {
   portfolioValue: string | null;

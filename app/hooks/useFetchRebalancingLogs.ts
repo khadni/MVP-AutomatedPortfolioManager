@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createPublicClient, http, parseAbiItem } from "viem";
 import { sepolia } from "wagmi/chains";
-import { portfolioManagerConfig } from "../src/abis";
+import { portfolioManagerConfig } from "../src/portfolioManagerConfig";
 
 const useFetchRebalancingLogs = () => {
   const [logs, setLogs] = useState<any[]>([]);
@@ -28,7 +28,6 @@ const useFetchRebalancingLogs = () => {
         // console.log(stringify(fetchedLogs));
         setLogs(fetchedLogs);
       } catch (err) {
-        // Error type checking
         if (err instanceof Error) {
           setLogsError(err);
         } else {

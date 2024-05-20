@@ -1,11 +1,13 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import type { NextPage } from "next";
 import Head from "next/head";
+import NavigationTabs from "../components/NavigationTabs";
+import Footer from "../components/Footer";
 import useFetchPortfolioData from "../hooks/useFetchPortfolioData";
 import useFetchMyInvestmentData from "../hooks/useFetchMyInvestmentData";
 import useFetchInvestmentsLogs from "../hooks/useFetchInvestmentsLogs";
-import NavigationTabs from "../components/NavigationTabs";
-import Footer from "../components/Footer";
+import { InvestForm } from "../components/InvestForm";
+import { RedeemForm } from "../components/RedeemForm";
 import { useAccount } from "wagmi";
 import TxIcon from "../assets/TxIcon";
 
@@ -17,7 +19,7 @@ const MyInvestment: NextPage = () => {
   const { isConnected } = useAccount();
 
   const renderInvestmentData = () => {
-    if (!isConnected) return <div>Please connect your account</div>;
+    if (!isConnected) return <div>Please connect your wallet</div>;
     if (loading) return <div className="text-2xl font-bold">Loading...</div>;
     if (error) return <div>Error: {error.message}</div>;
 
@@ -44,7 +46,7 @@ const MyInvestment: NextPage = () => {
       return (
         <tr>
           <td colSpan={5} className="pt-2">
-            Please connect your account
+            Please connect your wallet
           </td>
         </tr>
       );
@@ -99,7 +101,7 @@ const MyInvestment: NextPage = () => {
 
   const calculateUnrealizedGain = () => {
     if (!isConnected) {
-      return <div>Please connect your account</div>;
+      return <div>Please connect your wallet</div>;
     }
     if (loadingLogs || !PMTTokenValue || totalPMTAcquired === null) {
       return <div className="text-2xl font-bold">Loading...</div>;
@@ -171,13 +173,20 @@ const MyInvestment: NextPage = () => {
           </div>
 
           <div className="flex flex-wrap justify-center gap-4 mb-6">
-            <button className="px-6 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
-              INVEST
-            </button>
-            <button className="px-6 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
-              REDEEM
-            </button>
+            {isConnected ? (
+              <div className="flex w-full">
+                <div className="w-1/2">
+                  <InvestForm />
+                </div>
+                <div className="w-1/2">
+                  <RedeemForm />
+                </div>
+              </div>
+            ) : (
+              <div>Please connect your wallet above</div>
+            )}
           </div>
+
           <div className="p-4 border rounded-lg">
             <div className="mb-4 font-semibold text-md">History</div>
             <div className="overflow-x-auto">
