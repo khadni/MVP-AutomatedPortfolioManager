@@ -26,6 +26,10 @@ const Home: NextPage = () => {
       ? `${(PMTTokenValue / 1e6).toFixed(2)}`
       : "Unavailable";
 
+  const historicalReturn = formattedPMTTokenValue
+    ? `${((parseFloat(formattedPMTTokenValue) - 1) * 100).toFixed(2)}%`
+    : "Unavailable";
+
   return (
     <div className="flex flex-col min-h-screen">
       <Head>
@@ -41,15 +45,23 @@ const Home: NextPage = () => {
         <div className="max-w-4xl p-4 mx-auto bg-white sm:p-6">
           <NavigationTabs />
           {/* Portfolio and Token Value */}
-          <div className="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-2 mb-4 sm:grid-cols-4">
             <div className="p-4 border rounded-lg">
-              <div className="text-gray-600 text-md">Portfolio total value</div>
+              <div className="text-sm text-gray-600">Portfolio total value</div>
               <div className="text-2xl font-bold">
                 {isPending ? <span>Loading...</span> : `USDC ${portfolioValue}`}
               </div>
             </div>
             <div className="p-4 border rounded-lg">
-              <div className="text-gray-600">Portfolio token (PMT) value</div>
+              <div className="text-sm text-gray-600">
+                Portfolio historical return
+              </div>
+              <div className="text-2xl font-bold">
+                {isPending ? <span>Loading...</span> : `${historicalReturn}`}
+              </div>
+            </div>
+            <div className="p-4 border rounded-lg">
+              <div className="text-sm text-gray-600">Token (PMT) value</div>
               <div className="text-2xl font-bold">
                 {isPending ? (
                   <span>Loading...</span>
@@ -59,7 +71,7 @@ const Home: NextPage = () => {
               </div>
             </div>
             <div className="p-4 border rounded-lg">
-              <div className="text-gray-600">PMT in circulation</div>
+              <div className="text-sm text-gray-600">PMT in circulation</div>
               <div className="text-2xl font-bold">
                 {isPending ? <span>Loading...</span> : PMTTotalSupply}
               </div>

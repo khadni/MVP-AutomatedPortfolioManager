@@ -160,7 +160,6 @@ const MyInvestment: NextPage = () => {
       <main className="flex-grow">
         <div className="max-w-4xl p-4 mx-auto bg-white sm:p-6">
           <NavigationTabs />
-
           <div className="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2">
             <div className="p-4 border rounded-lg">
               <div className="text-gray-600 text-md">My investment</div>
@@ -173,7 +172,25 @@ const MyInvestment: NextPage = () => {
             </div>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-4 mb-6">
+          {/* Faucet Link Section */}
+          <div className="p-4 mt-4 mb-6 bg-white border rounded-lg">
+            <h3 className="font-semibold text-gray-600 text-md">
+              Need USDC to invest?
+            </h3>
+            <p className="text-sm text-gray-600">
+              <a
+                href="https://faucet.circle.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 hover:underline"
+              >
+                Get testnet USDC for Ethereum Sepolia
+              </a>
+              .
+            </p>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-4 mb-6 border rounded-lg">
             {isConnected ? (
               <div className="flex flex-col w-full md:flex-row">
                 <div className="w-full md:w-1/2">
