@@ -7,10 +7,10 @@ const ChainlinkLinks = () => {
   return (
     <div className="p-4 mb-4 bg-white border rounded-lg shadow">
       <div className="mb-4 font-semibold text-md">Links</div>
-      <div className="mb-2 text-sm font-semibold text-gray-700">
+      <div className="mb-2 text-sm font-semibold text-center text-gray-700">
         Deployed contracts on Ethereum Sepolia
       </div>
-      <ul className="pl-5 text-sm list-disc">
+      <ul className="pl-1 text-sm text-center">
         <li>
           <a
             href={`https://sepolia.etherscan.io/address/${portfolioManagerConfig.address}`}
@@ -42,7 +42,7 @@ const ChainlinkLinks = () => {
               Chainlink Automation
             </h3>
           </div>
-          <ul className="pl-5 text-sm list-disc">
+          <ul className="pl-1 text-sm text-center">
             <li>
               <a
                 href="https://automation.chain.link/sepolia/64159323189921786672647921773966883001841989688860098233415913457408266292103"
@@ -74,7 +74,7 @@ const ChainlinkLinks = () => {
               Chainlink Functions
             </h3>
           </div>
-          <ul className="pl-5 text-sm list-disc">
+          <ul className="pl-1 text-sm text-center">
             <li>
               <a
                 href="https://functions.chain.link/sepolia/2291"
