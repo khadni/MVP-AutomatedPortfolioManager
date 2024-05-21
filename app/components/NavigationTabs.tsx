@@ -33,7 +33,7 @@ const NavigationTabs = () => {
             "/"
           )}`}
         >
-          PORTFOLIO INFO
+          AUTOMATED PORTFOLIO INFO
         </Link>
         <Link
           href="/MyInvestment"

@@ -9,6 +9,7 @@ interface PortfolioData {
   MimicXAUAlloc: string | null;
   MimicBTCAlloc: string | null;
   MimicETHAlloc: string | null;
+  OffChainRebalancingData: number[] | null;
 }
 
 const useFetchPortfolioData = () => {
@@ -30,6 +31,10 @@ const useFetchPortfolioData = () => {
         ...portfolioManagerConfig,
         functionName: "getCurrentAllocations",
       },
+      {
+        ...portfolioManagerConfig,
+        functionName: "calculateAllocations",
+      },
     ],
   });
 
@@ -40,6 +45,7 @@ const useFetchPortfolioData = () => {
     MimicXAUAlloc: null,
     MimicBTCAlloc: null,
     MimicETHAlloc: null,
+    OffChainRebalancingData: null,
   });
 
   useEffect(() => {
@@ -52,6 +58,11 @@ const useFetchPortfolioData = () => {
         data[3]?.result && Array.isArray(data[3].result[1])
           ? data[3].result[1].map((value) => BigInt(value))
           : [null, null, null];
+
+      const offChainRebalancingData =
+        data[4]?.result && Array.isArray(data[4].result[1])
+          ? data[4].result[1].map((value) => Number(value))
+          : null;
 
       setFormattedData({
         portfolioValue:
@@ -75,6 +86,7 @@ const useFetchPortfolioData = () => {
           allocations[2] !== null
             ? (Number(allocations[2]) / 10 ** 4).toFixed(2)
             : null,
+        OffChainRebalancingData: offChainRebalancingData,
       });
     }
   }, [data]);
