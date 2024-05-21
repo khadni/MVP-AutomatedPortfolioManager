@@ -121,7 +121,7 @@ const Home: NextPage = () => {
                 Latest Offchain Rebalancing Data
               </h3>
               <div className="relative flex items-center group">
-                <span className="w-5 h-5 text-gray-500 cursor-pointer fill-current group-hover:opacity-100">
+                <span className="hidden w-5 h-5 text-gray-500 cursor-pointer fill-current group-hover:opacity-100 md:inline-block">
                   <InfoIcon />
                 </span>
                 <div className="absolute z-10 hidden w-64 p-4 ml-5 -mt-3 text-xs text-gray-900 transition-opacity duration-300 ease-in-out bg-gray-100 border border-gray-300 rounded shadow-lg opacity-0 group-hover:block group-hover:opacity-100">
