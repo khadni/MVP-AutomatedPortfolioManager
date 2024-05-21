@@ -92,9 +92,9 @@ const Home: NextPage = () => {
                 <div>Loading...</div>
               ) : (
                 [
-                  { name: "Mimic Gold", alloc: MimicXAUAlloc },
-                  { name: "Mimic WBTC", alloc: MimicBTCAlloc },
-                  { name: "Mimic ETH", alloc: MimicETHAlloc },
+                  { name: "Mimic Gold (mXAU)", alloc: MimicXAUAlloc },
+                  { name: "Mimic WBTC (mWBTC)", alloc: MimicBTCAlloc },
+                  { name: "Mimic ETH (mETH)", alloc: MimicETHAlloc },
                 ].map((asset) => (
                   <div key={asset.name} className="text-center">
                     <div className="mb-2 font-semibold text-gray-600">
@@ -113,8 +113,6 @@ const Home: NextPage = () => {
               )}
             </div>
           </div>
-          {/* Important Links Section */}
-          <ChainlinkLinks />
           {/* Rebalancing History Table */}
           <div className="p-4 border rounded-lg">
             <div className="mb-4 font-semibold text-md">
@@ -213,6 +211,8 @@ const Home: NextPage = () => {
               </table>
             </div>
           </div>
+          {/* Important Links Section */}
+          <ChainlinkLinks />
         </div>
       </main>
 
