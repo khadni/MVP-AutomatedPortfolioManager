@@ -30,11 +30,18 @@
 
 ## Setup
 
-1. Clone the repository and install all dependencies:
+1. Clone the repository and install all front-end dependencies:
 
    ```bash
-   git clone https://github.com/smartcontractkit/XXX
-   cd XXX
+   git clone https://github.com/khadni/MVP-AutomatedPortfolioManager.git
+   cd MVP-AutomatedPortfolioManager/app
+   npm install
+   ```
+
+1. Navigate to the root folder and install all back-end dependencies:
+
+   ```bash
+   cd ..
    npm install
    ```
 
@@ -69,7 +76,7 @@ forge script script/DeployOffChainDataFetcher.s.sol --rpc-url $RPC_URL_SEPOLIA -
 
 1. Open the `functions/updateRequestDon.js` script and update the `subscriptionId` variable with your Chainlink Functions subscription ID.
 
-1. Fund your Functions subscription with at least 5 testnet LINK.
+1. Fund your Functions subscription with at least 5 testnet LINK ([Chainlink Functions UI](https://functions.chain.link/)).
 
 1. Run the following script to update the `OffchainDataFetcher` Functions request with [DON-hosted Secrets](https://docs.chain.link/chainlink-functions/resources/secrets):
 
@@ -90,6 +97,8 @@ forge script script/DeployOffChainDataFetcher.s.sol --rpc-url $RPC_URL_SEPOLIA -
 
    **Note**: On testnets, DON-hosted secrets have a maximum Time to Live (TTL) of 72 hours. If you need to extend the TTL beyond this period, consider using [secrets hosted in your own GitHub gists](https://docs.chain.link/chainlink-functions/tutorials/api-use-secrets-gist) for your requests. For this approach, include your `GITHUB_API_TOKEN` in your `.env` file and use the `updateRequestGists.js` script instead of `updateRequestDon.js`.
 
+1. Add your `OffChainDataFetcher` contract as a consumer in your Functions subscription ([Chainlink Functions UI](https://functions.chain.link/)).
+
 ### Create a Time-based upkeep
 
 1. Register an upkeep to call the `sendRequestCBOR` function on your `OffchainDataFetcher` daily:
@@ -105,12 +114,12 @@ forge script script/DeployOffChainDataFetcher.s.sol --rpc-url $RPC_URL_SEPOLIA -
 1. Configure your contract so only the upkeep contract can call the `sendRequestCBOR` function. This security measure is important to prevent anyone from calling several times `sendRequestCBOR` and draining your Functions subscription balance.
 
    - Go to [Etherscan](https://sepolia.etherscan.io).
-   - Search for your `OffchainDataFetcher` contract address. **Note**: You can find it in `output/deployedOffchainDataFetcher.json`.
-   - Under the `Contract` section, click on the `Write Contract` tab.
-   - Connect your admin wallet (the one that deployed the contract).
+   - Enter your `OffchainDataFetcher` contract address in the search bar. **Note**: This address is available in `output/deployedOffchainDataFetcher.json`.
+   - Select the `Contract` section, then click on the `Write Contract` tab.
+   - Connect your admin wallet, which is the wallet used to deploy the contract.
    - Call the `setAutomationCronContract` function with the `Upkeep address` as the input parameter. **Note**: You can find the `Upkeep address` in the Details section of your upkeep in the [Automation UI](https://automation.chain.link/).
 
-## Deploy and configure the `AutomatedPortfolioManager` contract
+## `AutomatedPortfolioManager` deployment and setup
 
 ### Deploy the contract
 
@@ -129,7 +138,7 @@ forge script script/DeployAutomatedPortfolioManager.s.sol --rpc-url $RPC_URL_SEP
 1. Configure your contract so only the upkeep contract can call the `performUpkeep` function. This security measure is important to prevent anyone from calling several times `performUpkeep` and draining your Automation balance.
 
    - Go to [Etherscan](https://sepolia.etherscan.io).
-   - Search for your `AutomatedPortfolioManager` contract address. **Note**: You can find it in `output/deployedPortfolioManager.json`.
-   - Under the `Contract` section, click on the `Write Contract` tab.
-   - Connect your admin wallet (the one that deployed the contract).
-   - Call the `setAutomationUpkeepForwarderContract` function with the `Forwarder address` as the input parameter. **Note**: You can find the `Forwarder address` in the Details section of your upkeep in the [Automation UI](https://automation.chain.link/).
+   - Enter your `AutomatedPortfolioManager` contract address in the search bar. **Note**: This address is available in `output/deployedPortfolioManager.json`.
+   - Select the `Contract` section, then click on the `Write Contract` tab.
+   - Connect your admin wallet, which is the wallet used to deploy the contract.
+   - In the function inputs, enter the `Forwarder address` into the `setAutomationUpkeepForwarderContract` function. **Note**: You can find the `Forwarder address` in the Details section of your upkeep in the [Automation UI](https://automation.chain.link/).
