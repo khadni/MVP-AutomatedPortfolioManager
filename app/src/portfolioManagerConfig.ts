@@ -1,5 +1,7 @@
+import deployedConfig from "../../output/deployedPortfolioManager.json";
+
 export const portfolioManagerConfig = {
-  address: "0xe409d1C2Dc88F5fa209D0940A6c022B2784c364F", // Example contract address, replace with actual address
+  address: deployedConfig.PortfolioManager,
   abi: [
     {
       inputs: [
