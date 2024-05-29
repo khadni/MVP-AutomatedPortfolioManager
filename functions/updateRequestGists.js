@@ -14,7 +14,7 @@ const {
 const automatedFunctionsConsumerAbi =
   require("../out/OffchainDataFetcher.sol/OffchainDataFetcher.json").abi;
 const ethers = require("ethers");
-require("@chainlink/env-enc").config();
+require("dotenv").config();
 
 const consumerAddress = JSON.parse(
   fs.readFileSync("./output/deployedOffchainDataFetcher.json", "utf8")

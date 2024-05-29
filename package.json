@@ -9,7 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@chainlink/env-enc": "^1.0.5",
     "@chainlink/functions-toolkit": "^0.2.7",
     "dotenv": "^16.4.5",
     "ethers": "^5.7.2"

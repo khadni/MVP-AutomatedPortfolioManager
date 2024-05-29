@@ -12,7 +12,7 @@ const {
 const automatedFunctionsConsumerAbi =
   require("../out/OffchainDataFetcher.sol/OffchainDataFetcher.json").abi;
 const ethers = require("ethers");
-require("@chainlink/env-enc").config();
+require("dotenv").config();
 
 const consumerAddress = JSON.parse(
   fs.readFileSync("./output/deployedOffchainDataFetcher.json", "utf8")
@@ -40,7 +40,7 @@ const updateRequest = async () => {
     marketDataToken: process.env.MARKETDATA_TOKEN,
   };
   const slotIdNumber = 1; // slot ID where to upload the secrets
-  const expirationTimeMinutes = 1440; // expiration time in minutes of the secrets
+  const expirationTimeMinutes = 4320; // expiration time in minutes of the secrets
   const gasLimit = 300000;
 
   // Initialize ethers signer and provider to interact with the contracts onchain
