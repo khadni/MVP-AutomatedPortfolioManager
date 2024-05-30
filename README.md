@@ -1,14 +1,21 @@
 # Automated Portfolio Manager
 
-// INTRO
-// Add note on the Mimic tokens
+This quickstart guides you through deploying and setting up smart contracts that automatically rebalance an investment portfolio. The Automated Portfolio Manager contract uses offchain real-time data to adjust asset allocations based on market conditions, sentiment scores, and volatility indicators.
+
+**Note**: In this example, Mimic Tokens representing gold (mXAU), Wrapped Bitcoin (mWBTC), and Ethereum (mETH) serve as the underlying assets. These tokens are automatically bought or sold to mirror changes in crypto market sentiment and gold volatility (GVZ) to ensure the portfolio adjusts to evolving market conditions. In a real-world use case, you can integrate the portfolio rebalancing mechanism with any DeFi protocol, such as a swapping mechanism, investments in ERC-4626 vaults, etc.
+
+⚠️ **Disclaimer:**
+
+This tutorial represents an example of using a Chainlink product or service and is provided to help you understand how to interact with Chainlink's systems and services so that you can integrate them into your own. This template is provided "AS IS" and "AS AVAILABLE" without warranties of any kind, has not been audited, and may be missing key checks or error handling to make the usage of the product more clear. Do not use the code in this example in a production environment without completing your own audits and application of best practices. Neither Chainlink Labs, the Chainlink Foundation, nor Chainlink node operators are responsible for unintended outputs that are generated due to errors in code.
+
+The rebalancing strategy and logic outlined in this tutorial are solely for educational purposes and have not been backtested. This content is not meant to be financial advice and should not be interpreted as such. The example is intended to demonstrate the potential of Chainlink products. Users are strongly advised to perform their own due diligence before making any financial decisions.
 
 ## Table of Content
 
 - [Requirements](#requirements)
-- [Setup](#setup)
-- [`OffchainDataFetcher` contract](#offchaindatafetcher-contract)
-- [`AutomatedPortfolioManager` contract](#automatedportfolio-contract)
+- [Project setup](#setup)
+- [`OffchainDataFetcher` deployment and setup](#offchaindatafetcher-deployment-and-setup)
+- [`AutomatedPortfolioManager` deployment and setup](#automatedportfoliomanager-deployment-and-setup)
 
 ## Requirements
 
@@ -111,12 +118,12 @@ forge script script/DeployOffChainDataFetcher.s.sol --rpc-url $RPC_URL_SEPOLIA -
 
    **Note**: You can find your deployed `OffchainDataFetcher` contract address in `output/deployedOffchainDataFetcher.json`.
 
-1. Configure your contract so only the upkeep contract can call the `sendRequestCBOR` function. This security measure is important to prevent anyone from calling several times `sendRequestCBOR` and draining your Functions subscription balance.
+1. Configure your contract so only the upkeep contract (and your admin account, which deployed the contract) can call the `sendRequestCBOR` function. This security measure is important to prevent anyone from calling several times `sendRequestCBOR` and draining your Functions subscription balance.
 
    - Go to [Etherscan](https://sepolia.etherscan.io).
    - Enter your `OffchainDataFetcher` contract address in the search bar. **Note**: This address is available in `output/deployedOffchainDataFetcher.json`.
    - Select the `Contract` section, then click on the `Write Contract` tab.
-   - Connect your admin wallet, which is the wallet used to deploy the contract.
+   - Connect your admin account, which is the wallet you used to deploy the contract.
    - Call the `setAutomationCronContract` function with the `Upkeep address` as the input parameter. **Note**: You can find the `Upkeep address` in the Details section of your upkeep in the [Automation UI](https://automation.chain.link/).
 
 ## `AutomatedPortfolioManager` deployment and setup
@@ -135,10 +142,10 @@ forge script script/DeployAutomatedPortfolioManager.s.sol --rpc-url $RPC_URL_SEP
 
 1. Create a new Custom logic upkeep with a starting balance of 5 testnet LINK. **Note**: You can find your deployed `AutomatedPortfolioManager` contract address in `output/deployedPortfolioManager.json`.
 
-1. Configure your contract so only the upkeep contract can call the `performUpkeep` function. This security measure is important to prevent anyone from calling several times `performUpkeep` and draining your Automation balance.
+1. Configure your contract so only the upkeep contract (and your admin account, which deployed the contract) can call the `performUpkeep` function. This security measure is important to prevent anyone from calling several times `performUpkeep` and draining your Automation balance.
 
    - Go to [Etherscan](https://sepolia.etherscan.io).
    - Enter your `AutomatedPortfolioManager` contract address in the search bar. **Note**: This address is available in `output/deployedPortfolioManager.json`.
    - Select the `Contract` section, then click on the `Write Contract` tab.
-   - Connect your admin wallet, which is the wallet used to deploy the contract.
+   - Connect your admin account, which is the wallet you used to deploy the contract.
    - In the function inputs, enter the `Forwarder address` into the `setAutomationUpkeepForwarderContract` function. **Note**: You can find the `Forwarder address` in the Details section of your upkeep in the [Automation UI](https://automation.chain.link/).

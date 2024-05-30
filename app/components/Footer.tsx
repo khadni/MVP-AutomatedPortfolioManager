@@ -5,7 +5,7 @@ const Footer = () => {
         href="https://chain.link/"
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center justify-center w-full"
+        className="flex items-center justify-center w-full text-sm"
       >
         Made with ❤️ by Chainlink Labs
       </a>
