@@ -10,10 +10,11 @@ The example contract supports dynamic asset management using tokens that adhere 
 
 **Note**: In a real-world use case, you can integrate the portfolio rebalancing mechanism with any DeFi protocol, such as a swapping mechanism, investments in ERC-4626 vaults, etc.
 
-      ⚠️ **Disclaimer:**
-      This tutorial represents an example of using a Chainlink product or service and is provided to help you understand how to interact with Chainlink's systems and services so that you can integrate them into your own. This template is provided "AS IS" and "AS AVAILABLE" without warranties of any kind, has not been audited, and may be missing key checks or error handling to make the usage of the product more clear. Do not use the code in this example in a production environment without completing your own audits and application of best practices. Neither Chainlink Labs, the Chainlink Foundation, nor Chainlink node operators are responsible for unintended outputs that are generated due to errors in code.
+⚠️ **Disclaimer:**
 
-      The rebalancing strategy and logic outlined in this tutorial are solely for educational purposes and have not been backtested. This content is not meant to be financial advice and should not be interpreted as such. The example is intended to demonstrate the potential of Chainlink products. Users are strongly advised to perform their own due diligence before making any financial decisions.
+- This tutorial represents an example of using a Chainlink product or service and is provided to help you understand how to interact with Chainlink's systems and services so that you can integrate them into your own. This template is provided "AS IS" and "AS AVAILABLE" without warranties of any kind, has not been audited, and may be missing key checks or error handling to make the usage of the product more clear. Do not use the code in this example in a production environment without completing your own audits and application of best practices. Neither Chainlink Labs, the Chainlink Foundation, nor Chainlink node operators are responsible for unintended outputs that are generated due to errors in code.
+
+- The rebalancing strategy and logic outlined in this tutorial are solely for educational purposes and have not been backtested. This content is not meant to be financial advice and should not be interpreted as such. The example is intended to demonstrate the potential of Chainlink products. Users are strongly advised to perform their own due diligence before making any financial decisions.
 
 ## Table of Content
 
