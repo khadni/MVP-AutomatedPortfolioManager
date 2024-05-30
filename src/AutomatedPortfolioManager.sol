@@ -126,9 +126,9 @@ contract AutomatedPortfolioManager is ERC20, Ownable, AutomationCompatibleInterf
         i_link = LinkTokenInterface(0x779877A7B0D9E8603169DdbD7836e478b4624789); // hardcoded for Sepolia
         i_registrar = AutomationRegistrarInterface(0xb0E49c5D0d05cbc241d68c05BC5BA1d1B7B72976); // hardcoded for Sepolia
 
-        s_assets.push(Asset("MimicXAU", 0xb809576570dD4d9c33f5a6F370Fb542968be5804, s_priceFeedXAU, 400000)); // 40% gold allocation
-        s_assets.push(Asset("MimicBTC", 0x263699bc60C44477e5AcDfB1726BA5E89De9134B, s_priceFeedBTC, 300000)); // 30% BTC allocation
-        s_assets.push(Asset("MimicETH", 0x0F542B5D65aa3c29e6046DD219B27AE00b8371b0, s_priceFeedETH, 300000)); // 30% ETH allocation
+        s_assets.push(Asset("MimicXAU", 0xb809576570dD4d9c33f5a6F370Fb542968be5804, s_priceFeedXAU, 400000)); // initial 40% gold allocation
+        s_assets.push(Asset("MimicBTC", 0x263699bc60C44477e5AcDfB1726BA5E89De9134B, s_priceFeedBTC, 300000)); // initial 30% BTC allocation
+        s_assets.push(Asset("MimicETH", 0x0F542B5D65aa3c29e6046DD219B27AE00b8371b0, s_priceFeedETH, 300000)); // initial 30% ETH allocation
 
         s_lastRebalanceTimestamp = block.timestamp; // Set the initial rebalance timestamp
     }

@@ -1,8 +1,14 @@
 # Automated Portfolio Manager
 
-This quickstart guides you through deploying and setting up smart contracts that automatically rebalance an investment portfolio. The Automated Portfolio Manager contract uses offchain real-time data to adjust asset allocations based on market conditions, sentiment scores, and volatility indicators.
+## Overview
 
-**Note**: In this example, Mimic Tokens representing gold (mXAU), Wrapped Bitcoin (mWBTC), and Ethereum (mETH) serve as the underlying assets. These tokens are automatically bought or sold to mirror changes in crypto market sentiment and gold volatility (GVZ) to ensure the portfolio adjusts to evolving market conditions. In a real-world use case, you can integrate the portfolio rebalancing mechanism with any DeFi protocol, such as a swapping mechanism, investments in ERC-4626 vaults, etc.
+The Automated Portfolio Manager automatically rebalances an investment portfolio by using real-time data from off-chain sources. This contract adjusts asset allocations within a portfolio based on dynamic market conditions, sentiment scores, and volatility indicators such as the Gold Volatility Index (GVZ). It provides a modern approach to digital assets management.
+
+## Objectives
+
+The example contract supports dynamic asset management using tokens that adhere to the ERC20 standard. For this demonstration, Mimic Tokens representing gold (mXAU), Wrapped Bitcoin (mWBTC), and Ethereum (mETH) are used as the underlying assets. These tokens are automatically bought or sold to mirror changes in crypto market sentiment and gold volatility (GVZ) to ensure the portfolio adjusts to evolving market conditions. This functionality showcases how blockchain and Chainlink technologies can be applied to create a responsive investment strategy that adjusts in real time to global financial movements.
+
+**Note**: In a real-world use case, you can integrate the portfolio rebalancing mechanism with any DeFi protocol, such as a swapping mechanism, investments in ERC-4626 vaults, etc.
 
 ⚠️ **Disclaimer:**
 
@@ -16,6 +22,7 @@ The rebalancing strategy and logic outlined in this tutorial are solely for educ
 - [Project setup](#setup)
 - [`OffchainDataFetcher` deployment and setup](#offchaindatafetcher-deployment-and-setup)
 - [`AutomatedPortfolioManager` deployment and setup](#automatedportfoliomanager-deployment-and-setup)
+- [Run the dApp locally](#run-the-dapp-locally)
 
 ## Requirements
 
@@ -29,7 +36,9 @@ The rebalancing strategy and logic outlined in this tutorial are solely for educ
 
 - **RPC URL**: You need a Remote Procedure Call (RPC) URL for the Ethereum Sepolia network. You can obtain one by creating an account on [Alchemy](https://www.alchemy.com/) or [Infura](https://www.infura.io/) and setting up an Ethereum Sepolia project.
 - **Private key**: You need the private key of the account that will deploy and interact with the contracts. If you use MetaMask, follow the instructions to [Export a Private Key](https://support.metamask.io/hc/en-us/articles/360015289632-How-to-export-an-account-s-private-key).
-- **Testnet funds**: This guide requires testnet ETH and LINK on Ethereum Sepolia. Both are available at [faucets.chain.link](https://faucets.chain.link/sepolia).
+- **Testnet funds**: This guide requires testnet ETH, LINK, and USDC on Ethereum Sepolia.
+  - Get Sepolia testnet ETH and LINK at [faucets.chain.link](https://faucets.chain.link/sepolia).
+  - Get Sepolia testnet USDC at [faucet.circle.com](https://faucet.circle.com).
 - **Etherscan API Key**: An API key to verify your deployed contracts on the Etherscan block explorer.
 - **CryptoCompare API key**: You need an API key to fetch BTC and ETH [trading signals](https://min-api.cryptocompare.com/documentation?key=TradingSignals&cat=tradingSignalsIntoTheBlockLatest) from CryptoCompare. Get one for free at [CryptoCompare](https://min-api.cryptocompare.com/).
 - **MarketData token**: You need a valid token from MarketData to fetch the [GVZ index](https://www.forex.com/ie/news-and-analysis/gvz-index/) value. [Create a free account](https://dashboard.marketdata.app/marketdata/signup) and generate a token.
@@ -60,7 +69,17 @@ The rebalancing strategy and logic outlined in this tutorial are solely for educ
 
 1. Run `source .env` to make your environment variables available in your terminal session.
 
-1. Run `forge compile` to update dependencies in the `lib` folder. Expect an output similar to the following in your terminal:
+   ```bash
+   source .env
+   ```
+
+1. Run `forge compile` to update dependencies in the `lib` folder.
+
+   ```bash
+   forge compile
+   ```
+
+   Expect an output similar to the following in your terminal:
 
    ```bash
    [⠔] Compiling...
@@ -104,11 +123,11 @@ forge script script/DeployOffChainDataFetcher.s.sol --rpc-url $RPC_URL_SEPOLIA -
 
    **Note**: On testnets, DON-hosted secrets have a maximum Time to Live (TTL) of 72 hours. If you need to extend the TTL beyond this period, consider using [secrets hosted in your own GitHub gists](https://docs.chain.link/chainlink-functions/tutorials/api-use-secrets-gist) for your requests. For this approach, include your `GITHUB_API_TOKEN` in your `.env` file and use the `updateRequestGists.js` script instead of `updateRequestDon.js`.
 
-1. Add your `OffChainDataFetcher` contract as a consumer in your Functions subscription ([Chainlink Functions UI](https://functions.chain.link/)).
+1. Add your `OffChainDataFetcher` contract as a consumer in your Functions subscription ([Chainlink Functions UI](https://functions.chain.link/)). **Note**: You can find your deployed `OffchainDataFetcher` contract address in `output/deployedOffchainDataFetcher.json`.
 
 ### Create a Time-based upkeep
 
-1. Register an upkeep to call the `sendRequestCBOR` function on your `OffchainDataFetcher` daily:
+1. Register an upkeep to call the `sendRequestCBOR` function on your `OffchainDataFetcher` contract daily:
 
    - Go to the [Chainlink Automation UI](https://automation.chain.link/).
    - Create a Time-based upkeep that targets the `sendRequestCBOR` function.
@@ -149,3 +168,27 @@ forge script script/DeployAutomatedPortfolioManager.s.sol --rpc-url $RPC_URL_SEP
    - Select the `Contract` section, then click on the `Write Contract` tab.
    - Connect your admin account, which is the wallet you used to deploy the contract.
    - In the function inputs, enter the `Forwarder address` into the `setAutomationUpkeepForwarderContract` function. **Note**: You can find the `Forwarder address` in the Details section of your upkeep in the [Automation UI](https://automation.chain.link/).
+
+## Run the dApp locally
+
+1. Navigate to the `app` folder:
+
+   ```bash
+   cd app
+   ```
+
+1. Run the dApp locally:
+
+   ```bash
+   npm run dev
+   ```
+
+1. Navigate to `http://localhost:3000` with your favorite browser.
+
+1. Change tab to `My Investment`.
+
+1. Connect your wallet.
+
+1. Enter the amount of testnet USDC you want to invest and click `Invest`.
+
+**Note**: The initial assets allocation is 40% mXAU, 30% mWBTC, and 30% mETH. You can wait until the next scheduled time-based upkeep at 3 AM UTC to fetch the latest data and make it available in your `OffchainDataFetcherContract`. Your custom upkeep will then automatically rebalance the portfolio. Alternatively, you can call the `sendRequestCBOR` function on your `OffchainDataFetcherContract` on Etherscan with your admin account to initiate the first rebalance.

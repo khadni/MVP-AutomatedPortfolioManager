@@ -2,6 +2,7 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import NavigationTabs from "../components/NavigationTabs";
 import Disclaimer from "../components/Disclaimer";
+import PoweredBy from "../components/PoweredBy";
 import Footer from "../components/Footer";
 import useFetchPortfolioData from "../hooks/useFetchPortfolioData";
 import useFetchMyInvestmentData from "../hooks/useFetchMyInvestmentData";
@@ -103,8 +104,11 @@ const MyInvestment: NextPage = () => {
     if (!isConnected) {
       return <div>Please connect your wallet</div>;
     }
-    if (loadingLogs || !PMTTokenValue || totalPMTAcquired === null) {
+    if (loadingLogs) {
       return <div className="text-2xl font-bold">Loading...</div>;
+    }
+    if (totalPMTAcquired === null || !PMTTokenValue) {
+      return <div className="text-2xl font-bold">No investment found</div>;
     }
 
     if (totalUSDCCost === 0) {
@@ -224,6 +228,8 @@ const MyInvestment: NextPage = () => {
               </table>
             </div>
           </div>
+          {/* Powered By Chainlink */}
+          <PoweredBy />
         </div>
       </main>
 

@@ -1,8 +1,9 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import NavigationTabs from "../components/NavigationTabs";
-import ChainlinkLinks from "../components/ChainlinkLinks";
+import Links from "../components/Links";
 import Disclaimer from "../components/Disclaimer";
+import PoweredBy from "../components/PoweredBy";
 import Footer from "../components/Footer";
 import useFetchPortfolioData from "../hooks/useFetchPortfolioData";
 import useFetchRebalancingLogs from "../hooks/useFetchRebalancingLogs";
@@ -25,7 +26,7 @@ const Home: NextPage = () => {
 
   const formattedPMTTokenValue =
     PMTTokenValue !== null
-      ? `${(PMTTokenValue / 1e6).toFixed(2)}`
+      ? `USDC ${(PMTTokenValue / 1e6).toFixed(2)}`
       : "Unavailable";
 
   const pmtTokenValueNum = PMTTokenValue !== null ? PMTTokenValue / 1e6 : null;
@@ -55,7 +56,11 @@ const Home: NextPage = () => {
             <div className="p-4 border rounded-lg">
               <div className="text-sm text-gray-600">Portfolio total value</div>
               <div className="text-2xl font-bold">
-                {isPending ? <span>Loading...</span> : `USDC ${portfolioValue}`}
+                {isPending ? (
+                  <span>Loading...</span>
+                ) : (
+                  `USDC ${portfolioValue ?? 0}`
+                )}
               </div>
             </div>
             <div className="p-4 border rounded-lg">
@@ -72,14 +77,14 @@ const Home: NextPage = () => {
                 {isPending ? (
                   <span>Loading...</span>
                 ) : (
-                  `USDC ${formattedPMTTokenValue}`
+                  `${formattedPMTTokenValue}`
                 )}
               </div>
             </div>
             <div className="p-4 border rounded-lg">
               <div className="text-sm text-gray-600">PMT in circulation</div>
               <div className="text-2xl font-bold">
-                {isPending ? <span>Loading...</span> : PMTTotalSupply}
+                {isPending ? <span>Loading...</span> : PMTTotalSupply ?? 0}
               </div>
             </div>
           </div>
@@ -364,7 +369,9 @@ const Home: NextPage = () => {
             </div>
           </div>
           {/* Important Links Section */}
-          <ChainlinkLinks />
+          <Links />
+          {/* Powered By Chainlink */}
+          <PoweredBy />
         </div>
       </main>
 

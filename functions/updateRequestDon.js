@@ -16,7 +16,7 @@ require("dotenv").config();
 
 const consumerAddress = JSON.parse(
   fs.readFileSync("./output/deployedOffchainDataFetcher.json", "utf8")
-).offchainDataFetcher; // fetch the deployed OffChainDataFetcher contract address
+).offchainDataFetcher;
 const subscriptionId = 2291; // REPLACE this with your subscription ID
 
 const updateRequest = async () => {
@@ -44,7 +44,7 @@ const updateRequest = async () => {
   const gasLimit = 300000;
 
   // Initialize ethers signer and provider to interact with the contracts onchain
-  const privateKey = process.env.PRIVATE_KEY; // fetch PRIVATE_KEY
+  const privateKey = process.env.PRIVATE_KEY;
   if (!privateKey)
     throw new Error(
       "private key not provided - check your environment variables"
@@ -67,7 +67,7 @@ const updateRequest = async () => {
   const response = await simulateScript({
     source: source,
     args: args,
-    bytesArgs: [], // bytesArgs - arguments can be encoded off-chain to bytes.
+    bytesArgs: [],
     secrets: secrets,
   });
 
@@ -111,6 +111,7 @@ const updateRequest = async () => {
   console.log(
     `Upload encrypted secret to gateways ${gatewayUrls}. slotId ${slotIdNumber}. Expiration in minutes: ${expirationTimeMinutes}`
   );
+
   // Upload secrets
   const uploadResult = await secretsManager.uploadEncryptedSecretsToDON({
     encryptedSecretsHexstring: encryptedSecretsObj.encryptedSecrets,
@@ -141,7 +142,6 @@ const updateRequest = async () => {
   );
 
   // Encode request
-
   const functionsRequestBytesHexString = buildRequestCBOR({
     codeLocation: Location.Inline, // Location of the source code - Only Inline is supported at the moment
     codeLanguage: CodeLanguage.JavaScript, // Code language - Only JavaScript is supported at the moment
@@ -160,7 +160,6 @@ const updateRequest = async () => {
     ethers.utils.formatBytes32String(donId) // jobId is bytes32 representation of donId
   );
 
-  // Log transaction details
   console.log(
     `\n✅ Automated Functions request settings updated! Transaction hash ${transaction.hash} - Check the explorer ${explorerUrl}/tx/${transaction.hash}`
   );
