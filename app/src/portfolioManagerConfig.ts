@@ -1,7 +1,7 @@
 import deployedConfig from "../../output/deployedPortfolioManager.json";
 
 export const portfolioManagerConfig = {
-  address: deployedConfig.PortfolioManager,
+  address: deployedConfig.PortfolioManager as `0x${string}`,
   abi: [
     {
       inputs: [
