@@ -2,13 +2,15 @@
 
 ## Overview
 
-The Automated Portfolio Manager automatically rebalances an investment portfolio by using real-time data from off-chain sources. This contract adjusts asset allocations within a portfolio based on dynamic market conditions, sentiment scores, and volatility indicators such as the Gold Volatility Index (GVZ). It provides a modern approach to digital assets management.
+The Automated Portfolio Manager automatically rebalances an investment portfolio using real-time data from off-chain sources. This contract adjusts asset allocations within a portfolio based on dynamic market conditions, sentiment scores, and volatility indicators such as the Gold Volatility Index (GVZ). It provides a modern approach to digital assets management.
 
 ## Objectives
 
-The example contract supports dynamic asset management using tokens that adhere to the ERC20 standard. For this demonstration, Mimic Tokens representing gold (mXAU), Wrapped Bitcoin (mWBTC), and Ethereum (mETH) are used as the underlying assets. These tokens are automatically bought or sold to mirror changes in crypto market sentiment and gold volatility (GVZ) to ensure the portfolio adjusts to evolving market conditions. This functionality showcases how blockchain and Chainlink technologies can be applied to create a responsive investment strategy that adjusts in real time to global financial movements.
+The example contract supports dynamic asset management using tokens that adhere to the ERC20 standard. For this demonstration, Mimic Tokens representing gold (mXAU), Wrapped Bitcoin (mWBTC), and Ethereum (mETH) are used as the underlying assets. These tokens are automatically bought or sold to mirror changes in crypto market sentiment and gold volatility (GVZ) to ensure the portfolio adjusts to evolving market conditions. This functionality demonstrates how blockchain and Chainlink technologies can be used to create a dynamic investment strategy that adapts to global financial movements in real-time.
 
 **Note**: In a real-world use case, you can integrate the portfolio rebalancing mechanism with any DeFi protocol, such as a swapping mechanism, investments in ERC-4626 vaults, etc.
+
+![Automated Portfolio Manager - Concept](/app/assets/automated-portfolio-manager-concept.webp)
 
 ⚠️ **Disclaimer:**
 
