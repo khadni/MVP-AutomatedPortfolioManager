@@ -10,6 +10,14 @@ import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/interfaces/Ag
 import {TokenPricingUtils} from "./TokenPricingUtils.sol";
 import {LinkTokenInterface} from "@chainlink/contracts/src/v0.8/shared/interfaces/LinkTokenInterface.sol";
 
+/**
+ * @title Simple Mimic Token Contract
+ * @dev This contract assumes for simplification that 1 USDC is equivalent to 1 USD.
+ * Users of the Automated Portfolio contract can interact with already deployed Mimic Tokens on Ethereum Sepolia:
+ * - Mimic XAU: https://sepolia.etherscan.io/address/0xb809576570dD4d9c33f5a6F370Fb542968be5804
+ * - Mimic wBTC: https://sepolia.etherscan.io/address/0x263699bc60C44477e5AcDfB1726BA5E89De9134B
+ * - Mimic ETH: https://sepolia.etherscan.io/address/0x0F542B5D65aa3c29e6046DD219B27AE00b8371b0
+ */
 contract SimpleMimicToken is ERC20, ReentrancyGuard, Ownable {
     error MimicTokenFeeds__NoUsdcBalanceToWithdraw();
     error MimicTokenFeeds__InsufficientUsdcAllowance(uint256 currentAllowance, uint256 requiredAllowance);
