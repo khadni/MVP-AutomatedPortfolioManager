@@ -1,3 +1,5 @@
+Live demo: https://mvp-automated-portfolio-manager.vercel.app/
+
 # Automated Portfolio Manager
 
 ## Overview
