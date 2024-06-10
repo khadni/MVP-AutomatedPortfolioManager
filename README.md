@@ -12,7 +12,7 @@ The example contract supports dynamic asset management using tokens that adhere 
 
 **Note**: In a real-world use case, you can integrate the portfolio rebalancing mechanism with any DeFi protocol, such as a swapping mechanism, investments in ERC-4626 vaults, etc.
 
-![Automated Portfolio Manager - Concept](/app/assets/automated-portfolio-manager-concept.webp)
+![Automated Portfolio Manager - Concept](/app/assets/Automated_Portfolio_Manager_Concept.png)
 
 ⚠️ **Disclaimer:**
 
