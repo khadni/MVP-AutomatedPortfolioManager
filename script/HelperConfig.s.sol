@@ -16,26 +16,16 @@ contract HelperConfig is Script {
         if (block.chainid == 11155111) {
             activeNetworkConfig = getEthereumSepoliaConfig();
         }
-
-        // } else if (block.chainid == 421614) {
-        //     activeNetworkConfig = getArbitrumSepoliaConfig();
-        // } else {
-        //     activeNetworkConfig = getOrCreateAnvilEthConfig();
-        // }
     }
 
     function getEthereumSepoliaConfig() public pure returns (NetworkConfig memory) {
         NetworkConfig memory ethereumSepoliaConfig = NetworkConfig({
             functionsRouter: 0xb83E47C2bC239B3bf370bc41e1459A34b41238D0,
             donId: 0x66756e2d657468657265756d2d7365706f6c69612d3100000000000000000000,
-            subId: 0 // to do
+            subId: 0
         });
         return ethereumSepoliaConfig;
     }
 
-    // function getOrCreateAnvilEthConfig() public returns (NetworkConfig memory) {
-    //     // TO DO
-
-    //     return anvilConfig;
-    // }
+    // add other networks here
 }

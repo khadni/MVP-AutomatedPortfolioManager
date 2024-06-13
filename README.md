@@ -1,10 +1,10 @@
-Live demo: https://mvp-automated-portfolio-manager.vercel.app/
-
 # Automated Portfolio Manager
 
 ## Overview
 
-The Automated Portfolio Manager automatically rebalances an investment portfolio using real-time data from off-chain sources. This contract adjusts asset allocations within a portfolio based on dynamic market conditions, sentiment scores, and volatility indicators such as the Gold Volatility Index (GVZ). It provides a modern approach to digital assets management.
+The Automated Portfolio Manager automatically rebalances an investment portfolio using real-time data from on-chain and off-chain sources. These contracts enable adjustments in asset allocations within a portfolio based on dynamic market conditions, sentiment scores, and volatility indicators such as the Gold Volatility Index (GVZ). This approach provides a modern way to manage digital assets.
+
+A live demo is available at https://automated-portfolio-manager.vercel.app.
 
 ## Objectives
 
@@ -195,4 +195,4 @@ forge script script/DeployAutomatedPortfolioManager.s.sol --rpc-url $RPC_URL_SEP
 
 1. Enter the amount of testnet USDC you want to invest and click `Invest`.
 
-**Note**: The initial assets allocation is 40% mXAU, 30% mWBTC, and 30% mETH. You can wait until the next scheduled time-based upkeep at 3 AM UTC to fetch the latest data and make it available in your `OffchainDataFetcherContract`. Your custom upkeep will then automatically rebalance the portfolio. Alternatively, you can call the `sendRequestCBOR` function on your `OffchainDataFetcherContract` on Etherscan with your admin account to initiate the first rebalance.
+**Note**: The initial assets allocation is 40% mXAU, 30% mWBTC, and 30% mETH. You can wait until the next scheduled time-based upkeep at 3 AM UTC to fetch the latest data and make it available in your `OffchainDataFetcherContract`. Your custom upkeep will then automatically rebalance the portfolio. Alternatively, you can call the `sendRequestCBOR` function on your `OffchainDataFetcherContract` on [Etherscan](https://sepolia.etherscan.io/) with your admin account to initiate the first rebalance.
