@@ -273,7 +273,7 @@ const Home: NextPage = () => {
           {/* Rebalancing History Table */}
           <div className="p-4 border rounded-lg">
             <div className="mb-4 font-semibold text-md">
-              Portfolio Rebalancing History
+              Portfolio Rebalancing History (Last 10 Days)
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">

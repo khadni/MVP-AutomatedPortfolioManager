@@ -17,12 +17,26 @@ const useFetchRebalancingLogs = () => {
           transport: http(),
         });
 
+        // Fetch the latest block
+        const latestBlock = await publicClient.getBlock();
+        const latestBlockNumber = latestBlock.number;
+
+        // Calculate the number of blocks for the last 10 days
+        const blocksPerDay = BigInt((60 * 60 * 24) / 12); // 12 seconds per block for Ethereum Sepolia, adjust as needed
+        const daysToFetch = 10;
+        const blocksToFetch = blocksPerDay * BigInt(daysToFetch);
+
+        // Calculate the starting block
+        const fromBlock = latestBlockNumber - blocksToFetch;
+
+        console.log(fromBlock);
+
         const fetchedLogs = await publicClient.getLogs({
           address: portfolioManagerConfig.address,
           event: parseAbiItem(
             "event PortfolioRebalanced(uint256 indexed, uint256 indexed, uint256 indexed)"
           ),
-          fromBlock: BigInt(5920226), // Adjust the starting block to your contract deployment block
+          fromBlock: fromBlock,
         });
 
         // console.log(stringify(fetchedLogs));
