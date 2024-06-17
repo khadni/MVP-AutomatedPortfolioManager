@@ -50,19 +50,17 @@ The example contract supports dynamic asset management using tokens that adhere 
 
 ## Setup
 
-1. Clone the repository and install all front-end dependencies:
+1. Clone and navigate to the repository:
 
    ```bash
-   git clone https://github.com/khadni/MVP-AutomatedPortfolioManager.git
-   cd MVP-AutomatedPortfolioManager/app
-   npm install
+   git clone https://github.com/smartcontractkit/quickstarts-automated-portfolio-manager.git
+   cd quickstarts-automated-portfolio-manager
    ```
 
-1. Navigate to the root folder and install all back-end dependencies:
+1. Install the front-end and back-end dependencies:
 
    ```bash
-   cd ..
-   npm install
+   make install
    ```
 
 1. Copy the `.env.example` file to `.env` and fill in the values:
