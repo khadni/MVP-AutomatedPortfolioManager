@@ -16,7 +16,7 @@ const NavigationTabs = () => {
     <>
       <div className="flex items-center justify-between mb-24">
         <a
-          href="https://github.com/khadni/MVP-AutomatedPortfolioManager"
+          href="https://github.com/smartcontractkit/quickstarts-automated-portfolio-manager"
           target="_blank"
           rel="noopener noreferrer"
         >

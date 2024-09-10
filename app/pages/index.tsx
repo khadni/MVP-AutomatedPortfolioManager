@@ -132,7 +132,7 @@ const Home: NextPage = () => {
                 <div className="absolute z-10 hidden w-64 p-4 ml-5 -mt-3 text-xs text-gray-900 transition-opacity duration-300 ease-in-out bg-gray-100 border border-gray-300 rounded shadow-lg opacity-0 group-hover:block group-hover:opacity-100">
                   These offchain values are{" "}
                   <a
-                    href="https://github.com/khadni/MVP-AutomatedPortfolioManager/tree/main/functions"
+                    href="https://github.com/smartcontractkit/quickstarts-automated-portfolio-manager/tree/main/functions"
                     className="text-blue-600 hover:underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -141,7 +141,7 @@ const Home: NextPage = () => {
                   </a>{" "}
                   and they{" "}
                   <a
-                    href="https://github.com/khadni/MVP-AutomatedPortfolioManager/blob/fc9945e57be340dfb1342b3c26fac27ffd3128b3/src/AutomatedPortfolioManager.sol#L162"
+                    href="https://github.com/smartcontractkit/quickstarts-automated-portfolio-manager/blob/main/src/AutomatedPortfolioManager.sol#L162"
                     className="text-blue-600 hover:underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -175,7 +175,7 @@ const Home: NextPage = () => {
                       <li>
                         Computed Sentiment Score is{" "}
                         <a
-                          href="https://github.com/khadni/MVP-AutomatedPortfolioManager/blob/fc9945e57be340dfb1342b3c26fac27ffd3128b3/functions/source.js#L26"
+                          href="https://github.com/smartcontractkit/quickstarts-automated-portfolio-manager/blob/main/functions/source.js#L26"
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-blue-600 hover:underline"
@@ -206,7 +206,7 @@ const Home: NextPage = () => {
                       <li>
                         Computed Sentiment Score is{" "}
                         <a
-                          href="https://github.com/khadni/MVP-AutomatedPortfolioManager/blob/fc9945e57be340dfb1342b3c26fac27ffd3128b3/functions/source.js#L26"
+                          href="https://github.com/smartcontractkit/quickstarts-automated-portfolio-manager/blob/main/functions/source.js#L26"
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-blue-600 hover:underline"
