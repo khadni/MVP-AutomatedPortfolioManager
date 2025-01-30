@@ -14,9 +14,9 @@ The example contract supports dynamic asset management using tokens that adhere 
 
 ![Automated Portfolio Manager - Concept](/app/assets/Automated_Portfolio_Manager_Concept.png)
 
-⚠️ **Disclaimer:**
+⚠️ **Disclaimers:**
 
-- This tutorial represents an example of using a Chainlink product or service and is provided to help you understand how to interact with Chainlink's systems and services so that you can integrate them into your own. This template is provided "AS IS" and "AS AVAILABLE" without warranties of any kind, has not been audited, and may be missing key checks or error handling to make the usage of the product more clear. Do not use the code in this example in a production environment without completing your own audits and application of best practices. Neither Chainlink Labs, the Chainlink Foundation, nor Chainlink node operators are responsible for unintended outputs that are generated due to errors in code.
+- This tutorial represents an educational example to use a Chainlink system, product, or service and is provided to demonstrate how to interact with Chainlink’s systems, products, and services to integrate them into your own. This template is provided “AS IS” and “AS AVAILABLE” without warranties of any kind, it has not been audited, and it may be missing key checks or error handling to make the usage of the system, product or service more clear. Do not use the code in this example in a production environment without completing your own audits and application of best practices. Neither Chainlink Labs, the Chainlink Foundation, nor Chainlink node operators are responsible for unintended outputs that are generated due to errors in code.
 
 - The rebalancing strategy and logic outlined in this tutorial are solely for educational purposes and have not been backtested. This content is not meant to be financial advice and should not be interpreted as such. The example is intended to demonstrate the potential of Chainlink products. Users are strongly advised to perform their own due diligence before making any financial decisions.
 
@@ -31,6 +31,7 @@ The example contract supports dynamic asset management using tokens that adhere 
 ## Requirements
 
 - **Git**: Make sure you have Git installed. You can check your current version by running `git --version` in your terminal and download the latest version from the official [Git website](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) if necessary.
+- **Foundry**: This guide requires Foundry. Follow the instructions in the [Foundry documentation](https://book.getfoundry.sh/getting-started/installation) to install it.
 - **Nodejs** and **npm**: [Install the latest release of Node.js 20](https://nodejs.org/en/download/). **Note**: To ensure you are running the correct version in a terminal, type `node -v`.
 
   ```bash
@@ -39,12 +40,12 @@ The example contract supports dynamic asset management using tokens that adhere 
   ```
 
 - **RPC URL**: You need a Remote Procedure Call (RPC) URL for the Ethereum Sepolia network. You can obtain one by creating an account on [Alchemy](https://www.alchemy.com/) or [Infura](https://www.infura.io/) and setting up an Ethereum Sepolia project.
-- **Private key**: You need the private key of the account that will deploy and interact with the contracts. If you use MetaMask, follow the instructions to [Export a Private Key](https://support.metamask.io/hc/en-us/articles/360015289632-How-to-export-an-account-s-private-key).
+- **Private key**: You need the private key of the account that will deploy and interact with the contracts. If you use MetaMask, follow the instructions to [Export a Private Key](https://support.metamask.io/configure/accounts/how-to-export-an-accounts-private-key).
 - **Testnet funds**: This guide requires testnet ETH, LINK, and USDC on Ethereum Sepolia.
   - Get Sepolia testnet ETH and LINK at [faucets.chain.link](https://faucets.chain.link/sepolia).
   - Get Sepolia testnet USDC at [faucet.circle.com](https://faucet.circle.com).
 - **Etherscan API Key**: An API key to verify your deployed contracts on the Etherscan block explorer.
-- **CryptoCompare API key**: You need an API key to fetch BTC and ETH [trading signals](https://min-api.cryptocompare.com/documentation?key=TradingSignals&cat=tradingSignalsIntoTheBlockLatest) from CryptoCompare. Get one for free at [CryptoCompare](https://min-api.cryptocompare.com/).
+- **CryptoCompare API key**: You need an API key to fetch BTC and ETH [trading signals](https://min-api.cryptocompare.com/documentation?key=TradingSignals&cat=tradingSignalsIntoTheBlockLatest) from CryptoCompare. Create one for free at [CryptoCompare](https://min-api.cryptocompare.com/). Select the _Poll Live and Historical Data_ permission level within the _Read All Price Streaming and Polling Endpoints_ dropdown menu.
 - **MarketData token**: You need a valid token from MarketData to fetch the [GVZ index](https://www.forex.com/ie/news-and-analysis/gvz-index/) value. [Create a free account](https://dashboard.marketdata.app/marketdata/signup) and generate a token.
 - **Chainlink Functions subscription**: A Chainlink Functions subscription is required for this guide. If you do not already have a subscription, you can create one using the [Chainlink Functions UI](https://functions.chain.link/).
 
@@ -63,11 +64,13 @@ The example contract supports dynamic asset management using tokens that adhere 
    make install
    ```
 
-1. Copy the `.env.example` file to `.env` and fill in the values:
+1. Copy the `.env.example` file to `.env`:
 
    ```bash
    cp .env.example .env
    ```
+
+1. Open your `.env` file and fill in the required environment variables.
 
 1. Run `source .env` to make your environment variables available in your terminal session.
 
@@ -178,6 +181,20 @@ forge script script/DeployAutomatedPortfolioManager.s.sol --rpc-url $RPC_URL_SEP
    ```bash
    cd app
    ```
+
+1. Create a `.env.local` file in the `app` directory:
+
+   ```bash
+   cp .env.example .env.local
+   ```
+
+1. Open your `.env.local` file and add your Sepolia RPC URL:
+
+   ```
+   NEXT_PUBLIC_SEPOLIA_RPC_URL=your_sepolia_rpc_url
+   ```
+
+   You can use the same RPC URL you used for contract deployment or get one from providers like Alchemy or Infura.
 
 1. Run the dApp locally:
 
